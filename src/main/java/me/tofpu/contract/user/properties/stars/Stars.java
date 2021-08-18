@@ -1,6 +1,6 @@
-package me.tofpu.contract.user.properties;
+package me.tofpu.contract.user.properties.stars;
 
-import me.tofpu.contract.user.User;
+import me.tofpu.contract.user.properties.stars.review.UserReview;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface Stars {
     double averageRating();
 
     /**
-     * @return list of users whom rated this user
+     * @return list of reviews whom rated this user
      */
-    List<User> ratedBy();
+    List<UserReview> ratedBy();
 }
