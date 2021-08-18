@@ -1,20 +1,20 @@
 package me.tofpu.contract.contract.impl;
 
 import me.tofpu.contract.contract.Contract;
+import me.tofpu.contract.user.User;
 
 import java.time.Duration;
 import java.util.Objects;
-import java.util.UUID;
 
 public class ContractImpl implements Contract {
-    private final UUID employerId;
-    private final UUID contractorId;
+    private final User employerId;
+    private final User contractorId;
 
     private final long startedAt;
     private final long length;
     private final double amount;
 
-    public ContractImpl(final UUID employerId, final UUID contractorId, final long length, final double amount) {
+    public ContractImpl(final User employerId, final User contractorId, final long length, final double amount) {
         this.employerId = employerId;
         this.contractorId = contractorId;
         this.startedAt = System.nanoTime();
@@ -26,7 +26,7 @@ public class ContractImpl implements Contract {
      * @return the employer (whom created the contract)
      */
     @Override
-    public UUID getEmployerId() {
+    public User getEmployer() {
         return employerId;
     }
 
@@ -34,7 +34,7 @@ public class ContractImpl implements Contract {
      * @return the contractor (whom accepted the contract)
      */
     @Override
-    public UUID getContractorId() {
+    public User getContractor() {
         return contractorId;
     }
 
@@ -84,12 +84,12 @@ public class ContractImpl implements Contract {
         if (this == o) return true;
         if (!(o instanceof ContractImpl)) return false;
         final ContractImpl contract = (ContractImpl) o;
-        return getEmployerId().equals(contract.getEmployerId()) && getContractorId().equals(contract.getContractorId());
+        return getEmployer().equals(contract.getEmployer()) && getContractor().equals(contract.getContractor());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEmployerId(), getContractorId());
+        return Objects.hash(getEmployer(), getContractor());
     }
 
 

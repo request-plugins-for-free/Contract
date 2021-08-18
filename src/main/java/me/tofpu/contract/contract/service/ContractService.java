@@ -1,15 +1,15 @@
 package me.tofpu.contract.contract.service;
 
 import me.tofpu.contract.contract.Contract;
+import me.tofpu.contract.user.User;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface ContractService {
 
     /**
-     * @param contract adds the contract to a list
+     * @param contract adds the contract to the list
      */
     void registerContract(final Contract contract);
 
@@ -25,12 +25,12 @@ public interface ContractService {
      *
      * @return a list of available contracts that the employer contracted
      */
-    List<Contract> getEmployerContracts(final UUID employerId);
+    List<Contract> getEmployerContracts(final User employerId);
 
     /**
      * @param contractorId the contractor uniqueId (whom accepts contracts)
      *
      * @return an available contract
      */
-    Optional<Contract> getContractorContract(final UUID contractorId);
+    Optional<Contract> getContractorContract(final User contractorId);
 }

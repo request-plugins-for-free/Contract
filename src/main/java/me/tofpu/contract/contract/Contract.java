@@ -1,19 +1,20 @@
 package me.tofpu.contract.contract;
 
+import me.tofpu.contract.user.User;
+
 import java.time.Duration;
-import java.util.UUID;
 
 public interface Contract {
 
     /**
      * @return the employer (whom created the contract)
      */
-    UUID getEmployerId();
+    User getEmployer();
 
     /**
      * @return the contractor (whom accepted the contract)
      */
-    UUID getContractorId();
+    User getContractor();
 
     /**
      * @return the duration of the contract
