@@ -37,6 +37,11 @@ public interface Contract {
     double getAmount();
 
     /**
+     * @return the contract description
+     */
+    String description();
+
+    /**
      * @return returns true if the contract duration has reached the contract length, otherwise false
      */
     boolean hasEnded();

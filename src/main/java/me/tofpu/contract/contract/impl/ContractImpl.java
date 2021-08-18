@@ -13,10 +13,12 @@ public class ContractImpl implements Contract {
     private final long startedAt;
     private final long length;
     private final double amount;
+    private final String description;
 
-    public ContractImpl(final User employerId, final User contractorId, final long length, final double amount) {
+    public ContractImpl(final User employerId, final User contractorId, final long length, final double amount, final String description) {
         this.employerId = employerId;
         this.contractorId = contractorId;
+        this.description = description;
         this.startedAt = System.nanoTime();
         this.length = length;
         this.amount = amount;
@@ -51,7 +53,7 @@ public class ContractImpl implements Contract {
      */
     @Override
     public long startedAt() {
-        return startedAt;
+        return this.startedAt;
     }
 
     /**
@@ -59,7 +61,7 @@ public class ContractImpl implements Contract {
      */
     @Override
     public long length() {
-        return length;
+        return this.length;
     }
 
     /**
@@ -67,7 +69,15 @@ public class ContractImpl implements Contract {
      */
     @Override
     public double getAmount() {
-        return amount;
+        return this.amount;
+    }
+
+    /**
+     * @return the contract description
+     */
+    @Override
+    public String description() {
+        return this.description;
     }
 
     /**

@@ -3,6 +3,7 @@ package me.tofpu.contract.user.impl;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.User;
+import me.tofpu.contract.user.properties.stars.review.UserReview;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,15 +14,15 @@ public class UserImpl implements User {
     private String name;
     private final UUID uniqueId;
     private Contract currentContract;
-    private int totalRating;
-    private final List<User> ratedBy;
+    private double totalRating;
+    private final List<UserReview> ratedBy;
 
     public UserImpl(final UUID uniqueId) {
         this.uniqueId = uniqueId;
         this.ratedBy = Lists.newArrayList();
     }
 
-    public UserImpl(final UUID uniqueId, final List<User> ratedBy) {
+    public UserImpl(final UUID uniqueId, final List<UserReview> ratedBy) {
         this.uniqueId = uniqueId;
         this.ratedBy = ratedBy;
     }
@@ -30,8 +31,8 @@ public class UserImpl implements User {
             final String name,
             final UUID uniqueId,
             final Contract currentContract,
-            final int totalRating,
-            final List<User> ratedBy) {
+            final double totalRating,
+            final List<UserReview> ratedBy) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.currentContract = currentContract;
@@ -89,10 +90,10 @@ public class UserImpl implements User {
     }
 
     /**
-     * @return list of users whom rated this user
+     * @return list of reviews whom rated this user
      */
     @Override
-    public List<User> ratedBy() {
+    public List<UserReview> ratedBy() {
         return ratedBy;
     }
 
