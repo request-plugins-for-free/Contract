@@ -11,17 +11,17 @@ public interface User extends Stars {
     /**
      * @return the user name
      */
-    String getName();
+    String name();
 
     /**
-     * @param name the player name
+     * @param newName the player name
      */
-    void setName(final String name);
+    void name(final String newName);
 
     /**
      * @return the user unique id
      */
-    UUID getUniqueId();
+    UUID uniqueId();
 
     /**
      * @return the user current contract, if it's available

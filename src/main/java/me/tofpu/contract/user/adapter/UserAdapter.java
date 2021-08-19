@@ -1,7 +1,6 @@
 package me.tofpu.contract.user.adapter;
 
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -21,8 +20,8 @@ public class UserAdapter extends TypeAdapter<User> {
     public void write(final JsonWriter out, final User value) throws IOException {
         out.beginObject();
 
-        out.name("name").value(value.getName());
-        out.name("unique-id").value(value.getUniqueId().toString());
+        out.name("name").value(value.name());
+        out.name("unique-id").value(value.uniqueId().toString());
 
         out.name("current-contract");
         DataManager.GSON.toJson(value.currentContract(), Contract.class, out);

@@ -20,7 +20,7 @@ public class UserFactory {
     public static User create(final UUID uniqueId){
         final User user = new UserImpl(uniqueId);
         final Player player = Bukkit.getPlayer(uniqueId);
-        if (player != null) user.setName(player.getName());
+        if (player != null) user.name(player.getName());
         userService.registerUser(user);
 
         return user;
@@ -29,7 +29,7 @@ public class UserFactory {
     public static User create(final String name, final UUID uniqueId, final List<UserReview> userReviews){
         final User user = new UserImpl(name, uniqueId, null, 0, userReviews);
         final Player player = Bukkit.getPlayer(uniqueId);
-        if (player != null) user.setName(player.getName());
+        if (player != null) user.name(player.getName());
         userService.registerUser(user);
 
         return user;
@@ -38,7 +38,7 @@ public class UserFactory {
     public static User create(final String name, final UUID uniqueId, double totalRating, final List<UserReview> userReviews){
         final User user = new UserImpl(name, uniqueId, null, totalRating, userReviews);
         final Player player = Bukkit.getPlayer(uniqueId);
-        if (player != null) user.setName(player.getName());
+        if (player != null) user.name(player.getName());
         userService.registerUser(user);
 
         return user;
@@ -47,7 +47,7 @@ public class UserFactory {
     public static User create(final String name, final UUID uniqueId, final Contract currentContract, double totalRating, final List<UserReview> userReviews){
         final User user = new UserImpl(name, uniqueId, currentContract, totalRating, userReviews);
         final Player player = Bukkit.getPlayer(uniqueId);
-        if (player != null) user.setName(player.getName());
+        if (player != null) user.name(player.getName());
         userService.registerUser(user);
 
         return user;

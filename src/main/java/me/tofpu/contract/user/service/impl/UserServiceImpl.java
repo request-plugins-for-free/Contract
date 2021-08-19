@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUser(final UUID uniqueId) {
         for (final User user : this.users){
-            if (user.getUniqueId().equals(uniqueId)) return Optional.of(user);
+            if (user.uniqueId().equals(uniqueId)) return Optional.of(user);
         }
         return Optional.empty();
     }

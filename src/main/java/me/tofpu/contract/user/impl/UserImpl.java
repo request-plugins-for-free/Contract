@@ -44,23 +44,23 @@ public class UserImpl implements User {
      * @return the user name
      */
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     /**
-     * @param name the player name
+     * @param newName the player name
      */
     @Override
-    public void setName(final String name) {
-        this.name = name;
+    public void name(final String newName) {
+        this.name = newName;
     }
 
     /**
      * @return the user unique id
      */
     @Override
-    public UUID getUniqueId() {
+    public UUID uniqueId() {
         return uniqueId;
     }
 
@@ -102,11 +102,11 @@ public class UserImpl implements User {
         if (this == o) return true;
         if (!(o instanceof UserImpl)) return false;
         final UserImpl user = (UserImpl) o;
-        return getUniqueId().equals(user.getUniqueId());
+        return uniqueId().equals(user.uniqueId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUniqueId());
+        return Objects.hash(uniqueId());
     }
 }
