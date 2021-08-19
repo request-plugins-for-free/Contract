@@ -38,6 +38,13 @@ public interface ContractService {
     Optional<Contract> getContractorContract(final UUID contractorId);
 
     /**
+     * @param contractId the contract id
+     *
+     * @return an instance of contract id, if it's available
+     */
+    Optional<Contract> getContractById(final UUID contractId);
+
+    /**
      * Loads all the contracts stored in the directory param
      *
      * @param directory the directory where all the contracts is stored at

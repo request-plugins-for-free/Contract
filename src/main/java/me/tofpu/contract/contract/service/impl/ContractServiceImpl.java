@@ -53,6 +53,19 @@ public class ContractServiceImpl implements ContractService {
     }
 
     /**
+     * @param contractId the contract id
+     *
+     * @return an instance of contract id, if it's available
+     */
+    @Override
+    public Optional<Contract> getContractById(final UUID contractId) {
+        for (final Contract contract : this.contracts){
+            if (contract.id().equals(contractId)) return Optional.of(contract);
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Loads all the contracts stored in the directory param
      *
      * @param directory the directory where all the contracts is stored at
