@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.adapter.ContractAdapter;
+import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.adapter.UserAdapter;
 import me.tofpu.contract.user.factory.UserFactory;
@@ -15,7 +16,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 public class DataManager {
     public static final Gson GSON = new GsonBuilder()
@@ -24,16 +24,30 @@ public class DataManager {
             .registerTypeAdapter(User.class, new UserAdapter())
             .registerTypeAdapter(Contract.class, new ContractAdapter())
             .create();
+
     private final UserService userService;
+    private final ContractService contractService;
+
     private final File[] files;
 
-    public DataManager(final UserService userService) {
+    public DataManager(final UserService userService, final ContractService contractService) {
         this.userService = userService;
-        this.files = new File[3];
+        this.contractService = contractService;
+        this.files = new File[2];
     }
 
     public void initialize(final File directory){
         this.files[0] = new File(directory, "users");
+        this.files[1] = new File(directory, "contracts");
+    }
+
+    public void load(){
+        contractService.loadAll(files[1]);
+    }
+
+    public void save(){
+        contractService.saveAll(files[1]);
+        userService.saveAll(files[1]);
     }
 
     public Optional<User> loadUser(final Player player) {

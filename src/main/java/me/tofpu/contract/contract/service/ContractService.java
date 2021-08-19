@@ -1,8 +1,10 @@
 package me.tofpu.contract.contract.service;
 
+import com.google.gson.Gson;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.User;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,4 +36,18 @@ public interface ContractService {
      * @return an available contract
      */
     Optional<Contract> getContractorContract(final UUID contractorId);
+
+    /**
+     * Loads all the contracts stored in the directory param
+     *
+     * @param directory the directory where all the contracts is stored at
+     */
+    void loadAll(final File directory);
+
+    /**
+     * Saves all the contracts to that specific directory
+     *
+     * @param directory the directory to save all the contracts data
+     */
+    void saveAll(final File directory);
 }

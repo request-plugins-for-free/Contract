@@ -2,6 +2,7 @@ package me.tofpu.contract.user.service;
 
 import me.tofpu.contract.user.User;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,4 +26,11 @@ public interface UserService {
      * @return the user instance or a brand new instance if it's not available
      */
     User getUserOrDefault(final UUID uniqueId);
+
+    /**
+     * Saves all the users to that specific directory
+     *
+     * @param directory the directory to save all the users data
+     */
+    void saveAll(final File directory);
 }

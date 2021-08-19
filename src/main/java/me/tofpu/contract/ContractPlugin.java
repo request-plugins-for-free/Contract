@@ -20,7 +20,7 @@ public final class ContractPlugin extends JavaPlugin {
         this.userService = new UserServiceImpl();
         this.contractService = new ContractServiceImpl();
 
-        this.dataManager = new DataManager(userService);
+        this.dataManager = new DataManager(userService, contractService);
     }
 
     private void initializeFactories(){
