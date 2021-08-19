@@ -5,22 +5,16 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
-import me.tofpu.contract.user.User;
 
 import java.io.IOException;
 import java.util.UUID;
 
 public class ContractAdapter extends TypeAdapter<Contract> {
-    /**
-     * Writes one JSON value (an array, object, string, number, boolean or null)
-     * for {@code value}.
-     *
-     * @param out
-     * @param value the Java object to write. May be null.
-     */
+
     @Override
     public void write(final JsonWriter out, final Contract value) throws IOException {
         out.beginObject();
+        out.name("id").value(value.id().toString());
 
         out.name("employer-name").value(value.employerName());
         out.name("employer-unique-id").value(value.employerId().toString());
@@ -29,24 +23,18 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         out.name("contractor-unique-id").value(value.contractorId().toString());
 
         out.name("description").value(value.description());
-        out.name("amount").value(value.getAmount());
+        out.name("amount").value(value.amount());
         out.name("started-at").value(value.startedAt());
         out.name("length").value(value.length());
 
         out.endObject();
     }
 
-    /**
-     * Reads one JSON value (an array, object, string, number, boolean or null)
-     * and converts it to a Java object. Returns the converted object.
-     *
-     * @param in
-     *
-     * @return the converted Java object. May be null.
-     */
     @Override
     public Contract read(final JsonReader in) throws IOException {
         in.beginObject();
+        UUID id = null;
+
         String employerName = "";
         UUID employerUniqueId = null;
 
@@ -61,6 +49,9 @@ public class ContractAdapter extends TypeAdapter<Contract> {
 
         while (in.hasNext()){
             switch (in.nextName()){
+                case "id":
+                    id = UUID.fromString(in.nextString());
+                    break;
                 case "employer-name":
                     employerName = in.nextString();
                     break;
@@ -89,6 +80,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         }
 
         in.endObject();
-        return ContractFactory.create(employerName, employerUniqueId, contractorName, contractorUniqueId, description, startedAt, length, amount);
+        return ContractFactory.create(id, employerName, employerUniqueId, contractorName, contractorUniqueId, description, startedAt, length, amount);
     }
 }

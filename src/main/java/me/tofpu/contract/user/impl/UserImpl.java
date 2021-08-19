@@ -73,6 +73,14 @@ public class UserImpl implements User {
     }
 
     /**
+     * @param contract the current contract the user is in
+     */
+    @Override
+    public void currentContract(final Contract currentContract) {
+        this.currentContract = currentContract;
+    }
+
+    /**
      * @return the user total rating
      */
     @Override

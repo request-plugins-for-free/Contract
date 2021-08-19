@@ -1,12 +1,19 @@
 package me.tofpu.contract.contract.impl;
 
+import me.tofpu.contract.ContractPlugin;
 import me.tofpu.contract.contract.Contract;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ContractImpl implements Contract {
+    private final UUID id;
+
     private String employerName;
     private final UUID employerId;
 
@@ -18,7 +25,8 @@ public class ContractImpl implements Contract {
     private final double amount;
     private final String description;
 
-    public ContractImpl(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount) {
+    public ContractImpl(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount) {
+        this.id = id;
         this.employerName = employerName;
         this.employerId = employerId;
 
@@ -29,6 +37,30 @@ public class ContractImpl implements Contract {
         this.startedAt = startedAt;
         this.length = length;
         this.amount = amount;
+
+        // This is for ending the contract once it has reached it's supposedly length
+        Bukkit.getScheduler().runTaskTimerAsynchronously(ContractPlugin.getPlugin(ContractPlugin.class), new Consumer<BukkitTask>() {
+            @Override
+            public void accept(final BukkitTask bukkitTask) {
+                // returns true if the time passed the contract's length
+                if (hasEnded()){
+                    bukkitTask.cancel();
+
+                    //TODO: USE THE PROPER CLASS DEPENDENCY LATER, I'LL FIGURE IT OUT
+                    Bukkit.getScheduler().runTask(ContractPlugin.getPlugin(ContractPlugin.class), new Consumer<BukkitTask>() {
+                        @Override
+                        public void accept(final BukkitTask bukkitTask) {
+                            final Player employer = Bukkit.getPlayer(employerId());
+                            final Player contractor = Bukkit.getPlayer(contractorId());
+
+                            // TODO: SEND MESSAGE SAYING THE CONTRACT HAS COMPLETED
+                            // TODO: SEND CONTRACT AMOUNT TO THE CONTRACTOR
+                            // TODO: HAVE THE EMPLOYER RATE THE CONTRACTOR? THROUGH A COMMAND MAYBE?
+                        }
+                    });
+                }
+            }
+        }, 0, 20);
     }
 
     /**
@@ -107,7 +139,7 @@ public class ContractImpl implements Contract {
      * @return the contract amount (when it's successful)
      */
     @Override
-    public double getAmount() {
+    public double amount() {
         return this.amount;
     }
 
@@ -126,6 +158,11 @@ public class ContractImpl implements Contract {
     public boolean hasEnded() {
         final Duration duration = getDuration();
         return duration.toMinutes() >= length();
+    }
+
+    @Override
+    public UUID id() {
+        return id;
     }
 
     @Override

@@ -27,4 +27,9 @@ public interface User extends Stars {
      * @return the user current contract, if it's available
      */
     Optional<Contract> currentContract();
+
+    /**
+     * @param contract the current contract the user is in
+     */
+    void currentContract(final Contract currentContract);
 }

@@ -1,7 +1,5 @@
 package me.tofpu.contract.contract;
 
-import me.tofpu.contract.user.User;
-
 import java.time.Duration;
 import java.util.UUID;
 
@@ -67,7 +65,7 @@ public interface Contract {
     /**
      * @return the contract amount (when it's successful)
      */
-    double getAmount();
+    double amount();
 
     /**
      * @return the contract description
@@ -78,4 +76,6 @@ public interface Contract {
      * @return returns true if the contract duration has reached the contract length, otherwise false
      */
     boolean hasEnded();
+
+    UUID id();
 }

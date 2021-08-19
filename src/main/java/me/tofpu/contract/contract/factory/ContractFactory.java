@@ -20,11 +20,15 @@ public class ContractFactory {
         ContractFactory.userService = userService;
     }
 
-    public static Contract create(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount){
-        final Contract contract = new ContractImpl(employerName, employerId, contractorName, contractorId, description, startedAt, length, amount);
+    public static Contract create(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount){
+        final Contract contract = new ContractImpl(id, employerName, employerId, contractorName, contractorId, description, startedAt, length, amount);
 
         contractService.registerContract(contract);
         return contract;
+    }
+
+    public static Contract create(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long length, final double amount){
+        return create(UUID.randomUUID(), employerName, employerId, contractorName, contractorId, description, System.nanoTime(), length, amount);
     }
 
 //    public static Contract create(final UUID employerId, final String contractorName, final long length, final double amount, final String description){
