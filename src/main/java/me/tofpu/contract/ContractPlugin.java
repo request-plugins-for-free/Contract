@@ -1,5 +1,6 @@
 package me.tofpu.contract;
 
+import me.tofpu.contract.command.CommandHandler;
 import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
@@ -34,11 +35,16 @@ public final class ContractPlugin extends JavaPlugin {
         this.dataManager.initialize(getDataFolder());
     }
 
+    private void initializeCommand(){
+        new CommandHandler(this, userService, contractService);
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         initializeFactories();
         initializeData();
+        initializeCommand();
     }
 
     @Override
