@@ -23,7 +23,7 @@ public class UserAdapter extends TypeAdapter<User> {
 
         out.name("name").value(value.getName());
         out.name("unique-id").value(value.getUniqueId().toString());
-        // TODO: CONTRACT ADAPTER
+
         out.name("current-contract");
         DataManager.GSON.toJson(value.currentContract(), Contract.class, out);
 

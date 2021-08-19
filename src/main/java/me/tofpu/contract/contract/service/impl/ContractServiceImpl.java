@@ -3,10 +3,10 @@ package me.tofpu.contract.contract.service.impl;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
-import me.tofpu.contract.user.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ContractServiceImpl implements ContractService {
     private final List<Contract> contracts;
@@ -29,10 +29,10 @@ public class ContractServiceImpl implements ContractService {
      * @return a list of available contracts that the employer contracted
      */
     @Override
-    public List<Contract> getEmployerContracts(final User employerId) {
+    public List<Contract> getEmployerContracts(final UUID employerId) {
         final List<Contract> contracts = Lists.newArrayList();
         for (final Contract contract : this.contracts){
-            if (contract.getEmployer().equals(employerId)) contracts.add(contract);
+            if (contract.employerId().equals(employerId)) contracts.add(contract);
         }
         return contracts;
     }
@@ -43,9 +43,9 @@ public class ContractServiceImpl implements ContractService {
      * @return an available contract
      */
     @Override
-    public Optional<Contract> getContractorContract(final User contractorId) {
+    public Optional<Contract> getContractorContract(final UUID contractorId) {
         for (final Contract contract : this.contracts){
-            if (contract.getContractor().equals(contractorId)) return Optional.of(contract);
+            if (contract.contractorId().equals(contractorId)) return Optional.of(contract);
         }
         return Optional.empty();
     }

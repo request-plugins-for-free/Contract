@@ -7,7 +7,6 @@ import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.user.service.UserService;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class ContractFactory {
@@ -21,12 +20,19 @@ public class ContractFactory {
         ContractFactory.userService = userService;
     }
 
-    public static Contract create(final UUID employerId, final String contractorName, final long length, final double amount, final String description){
-        final Optional<UUID> contractorId = Util.getUniqueId(contractorName);
-        if (!contractorId.isPresent()) return null;
-        final Contract contract = new ContractImpl(userService.getUser(employerId).orElse(dataManager.loadUser(employerId).get()), userService.getUserOrDefault(contractorId.get()), length, amount, description);
+    public static Contract create(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount){
+        final Contract contract = new ContractImpl(employerName, employerId, contractorName, contractorId, description, startedAt, length, amount);
 
         contractService.registerContract(contract);
         return contract;
     }
+
+//    public static Contract create(final UUID employerId, final String contractorName, final long length, final double amount, final String description){
+//        final Optional<UUID> contractorId = Util.getUniqueId(contractorName);
+//        if (!contractorId.isPresent()) return null;
+//        final Contract contract = new ContractImpl(userService.getUser(employerId).orElse(dataManager.loadUser(employerId).get()), userService.getUserOrDefault(contractorId.get()), description, length, amount);
+//
+//        contractService.registerContract(contract);
+//        return contract;
+//    }
 }

@@ -1,43 +1,82 @@
 package me.tofpu.contract.contract.impl;
 
 import me.tofpu.contract.contract.Contract;
-import me.tofpu.contract.user.User;
 
 import java.time.Duration;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ContractImpl implements Contract {
-    private final User employerId;
-    private final User contractorId;
+    private String employerName;
+    private final UUID employerId;
+
+    private String contractorName;
+    private final UUID contractorId;
 
     private final long startedAt;
     private final long length;
     private final double amount;
     private final String description;
 
-    public ContractImpl(final User employerId, final User contractorId, final long length, final double amount, final String description) {
+    public ContractImpl(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount) {
+        this.employerName = employerName;
         this.employerId = employerId;
+
+        this.contractorName = contractorName;
         this.contractorId = contractorId;
+
         this.description = description;
-        this.startedAt = System.nanoTime();
+        this.startedAt = startedAt;
         this.length = length;
         this.amount = amount;
     }
 
     /**
-     * @return the employer (whom created the contract)
+     * @return the employer name (whom created the contract)
      */
     @Override
-    public User getEmployer() {
+    public String employerName() {
+        return employerName;
+    }
+
+    /**
+     * @return the employer unique id (whom created the contract)
+     */
+    @Override
+    public UUID employerId() {
         return employerId;
     }
 
     /**
-     * @return the contractor (whom accepted the contract)
+     * @return the contractor name (whom accepted the contract)
      */
     @Override
-    public User getContractor() {
+    public String contractorName() {
+        return contractorName;
+    }
+
+    /**
+     * @return the contractor unique id (whom accepted the contract)
+     */
+    @Override
+    public UUID contractorId() {
         return contractorId;
+    }
+
+    /**
+     * @param newName new employer name
+     */
+    @Override
+    public void employerName(final String newName) {
+        this.employerName = newName;
+    }
+
+    /**
+     * @param newName new contractor name
+     */
+    @Override
+    public void contractorName(final String newName) {
+        this.contractorName = newName;
     }
 
     /**
@@ -94,14 +133,13 @@ public class ContractImpl implements Contract {
         if (this == o) return true;
         if (!(o instanceof ContractImpl)) return false;
         final ContractImpl contract = (ContractImpl) o;
-        return getEmployer().equals(contract.getEmployer()) && getContractor().equals(contract.getContractor());
+        return employerId.equals(contract.employerId) && contractorId.equals(contract.contractorId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEmployer(), getContractor());
+        return Objects.hash(employerId, contractorId);
     }
-
 
     @Override
     public String toString() {

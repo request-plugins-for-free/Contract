@@ -22,9 +22,12 @@ public class ContractAdapter extends TypeAdapter<Contract> {
     public void write(final JsonWriter out, final Contract value) throws IOException {
         out.beginObject();
 
-        final User user = value.getEmployer();
-        out.name("employer-name").value(user.getName());
-        out.name("employer-unique-id").value(user.getUniqueId().toString());
+        out.name("employer-name").value(value.employerName());
+        out.name("employer-unique-id").value(value.employerId().toString());
+
+        out.name("contractor-name").value(value.contractorName());
+        out.name("contractor-unique-id").value(value.contractorId().toString());
+
         out.name("description").value(value.description());
         out.name("amount").value(value.getAmount());
         out.name("started-at").value(value.startedAt());
@@ -47,6 +50,9 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         String employerName = "";
         UUID employerUniqueId = null;
 
+        String contractorName = "";
+        UUID contractorUniqueId = null;
+
         String description = "";
         double amount = 0;
 
@@ -60,6 +66,12 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                     break;
                 case "employer-unique-id":
                     employerUniqueId = UUID.fromString(in.nextString());
+                    break;
+                case "contractor-name":
+                    contractorName = in.nextString();
+                    break;
+                case "contractor-unique-id":
+                    contractorUniqueId = UUID.fromString(in.nextString());
                     break;
                 case "description":
                     description = in.nextString();
@@ -77,6 +89,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         }
 
         in.endObject();
-        return ContractFactory.create(employerUniqueId, employerName, length, amount, description);
+        return ContractFactory.create(employerName, employerUniqueId, contractorName, contractorUniqueId, description, startedAt, length, amount);
     }
 }
