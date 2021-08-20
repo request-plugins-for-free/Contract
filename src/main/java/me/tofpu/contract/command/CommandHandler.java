@@ -1,10 +1,14 @@
 package me.tofpu.contract.command;
 
 import co.aikar.commands.BukkitCommandManager;
+import com.google.common.collect.Lists;
 import me.tofpu.contract.command.extend.MainCommand;
+import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.service.UserService;
 import org.bukkit.plugin.Plugin;
+
+import java.util.List;
 
 public class CommandHandler {
     private final BukkitCommandManager commandManager;
@@ -19,6 +23,20 @@ public class CommandHandler {
     }
 
     public void initialize(){
+        // command completions
+        commandManager.getCommandCompletions()
+                .registerCompletion("selfContractsId", context -> {
+                    final List<Contract> contracts = contractService.of(context.getPlayer().getUniqueId());
+                    final List<String> ids = Lists.newArrayList();
+
+                    for (final Contract contract : contracts){
+                        if (contract.hasEnded()) ids.add(contract.id().toString());
+                    }
+
+                    return ids;
+                });
+
+        // command registrations
         commandManager.registerCommand(new MainCommand(userService, contractService));
     }
 }

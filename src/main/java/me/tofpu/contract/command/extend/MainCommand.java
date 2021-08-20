@@ -1,17 +1,19 @@
 package me.tofpu.contract.command.extend;
 
 import co.aikar.commands.annotation.*;
+import me.tofpu.contract.Util;
 import me.tofpu.contract.command.base.ExtraBaseCommand;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
-import me.tofpu.contract.user.properties.stars.review.UserReview;
-import me.tofpu.contract.user.properties.stars.review.factory.UserReviewFactory;
+import me.tofpu.contract.contract.review.ContractReview;
+import me.tofpu.contract.contract.review.factory.ContractReviewFactory;
 import me.tofpu.contract.user.service.UserService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public class MainCommand extends ExtraBaseCommand {
 
     @Subcommand("create")
     @CommandAlias("create")
+    @CommandCompletion("@players")
     @Syntax("<player> <contract-time-in-minutes> <contract-amount> <description>")
     @CommandPermission("contract.create")
     public void onCreate(final Player employer, @Split String[] args){
@@ -56,7 +59,9 @@ public class MainCommand extends ExtraBaseCommand {
         // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN MADE!
     }
 
+    @Subcommand("rate")
     @CommandAlias("rate")
+    @CommandCompletion("@selfContractsId @range:0-5")
     @Syntax("<contract-id> <out-of-five> <review>")
     public void onRate(final Player employer, @Split String[] args){
         final UUID contractId = UUID.fromString(args[0]);
@@ -72,16 +77,89 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
 
-        final User user = userService.getUser(contract.contractorId()).get();
         final double rating = Double.parseDouble(args[1]);
         StringBuilder description = new StringBuilder();
         for (int i = 2; i < args.length; i++){
             description.append(args[i]);
         }
 
-        final UserReview review = UserReviewFactory.create(user.name(), user.uniqueId(), rating, description.toString());
+        final ContractReview review = ContractReviewFactory.create(rating, description.toString());
         // TODO: MESSAGE THE CONTRACTOR SAYING THE EMPLOYER HAS RATED YOU
         // TODO: MESSAGE THE EMPLOYER SAYING YOU'VE SUCCESSFULLY RATED THE EMPLOYER
-        user.ratedBy().add(review);
+
+        contract.review().rate(rating);
+        contract.review().description(description.toString());
+    }
+
+    @Subcommand("history")
+    @CommandAlias("history")
+    @Syntax("[contract-id]")
+    public void onHistory(final Player player, @co.aikar.commands.annotation.Optional String id){
+        final boolean showAll = id == null || id.isEmpty();
+        // > Contract JAI1JDJA-1J29-GHMAHF
+        // Employer: HoodBoy
+        // Description: Clean up my Minecraft House
+        // Length: 20 minutes
+        // Money: 1000$
+        // > Review
+        // Rate: 1 stars
+        // Review: this motherfucker' somehow made it worse & stole my fuckin' money, I ain't hirin' nobody no more.
+        final String format =
+                " &6&l&m*&r Contract &e%contract-id%:\n" +
+                        "&eEmployer: &6%employer-name%\n" +
+                        "&eDescription: &6%description%\n" +
+                        "&eLength: &6%length%" +
+                        "&eMoney: &6%money%\n" +
+                        "&6&l&m*&r Review\n" +
+                        "Rate: %rate% stars" +
+                        "Review: %review%";
+
+        final StringBuilder builder = new StringBuilder();
+        if (showAll){
+            final List<Contract> contracts = contractService.of(player.getUniqueId());
+            for (final Contract contract : contracts){
+                if (builder.length() != 0) builder.append("\n");
+                builder.append(formatContract(contract));
+            }
+        } else {
+            final Optional<Contract> optional = contractService.getContractById(UUID.fromString(id));
+            if (!optional.isPresent()){
+                // TODO: SEND MESSAGE SAYING THAT CONTRACT DOESN'T EXIST
+                return;
+            }
+            builder.append(optional.get());
+        }
+
+        player.sendMessage(Util.colorize(builder.toString()));
+    }
+
+    private String formatContract(final Contract contract){
+        final String format =
+                " &6&l&m*&r Contract &e%contract-id%:\n" +
+                        "&eEmployer: &6%employer-name%\n" +
+                        "&eDescription: &6%description%\n" +
+                        "&eLength: &6%length%" +
+                        "&eMoney: &6%money%\n" +
+                        "&6&l&m*&r Review\n" +
+                        "Rate: %rate% stars" +
+                        "Review: %review%";
+        final ContractReview review = contract.review();
+
+        return Util.WordReplacer.replace(format,
+                new String[]{
+                        "%contract-id%",
+                        "%employer-name%",
+                        "%description%",
+                        "%length%",
+                        "%money%",
+                        "%rate%",
+                        "%review%"},
+                contract.id().toString(),
+                contract.employerName(),
+                contract.description(),
+                contract.length() + "",
+                contract.amount() + "",
+                review.rate() == -1 ? "N/A" : review.rate() + "",
+                review.description() == null ? "N/A" : review.description());
     }
 }
