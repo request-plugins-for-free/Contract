@@ -53,6 +53,21 @@ public class ContractServiceImpl implements ContractService {
     }
 
     /**
+     * @param uniqueId the contractor/employer id
+     *
+     * @return the contracts made/accepted by unique id
+     */
+    @Override
+    public List<Contract> of(final UUID uniqueId) {
+        final List<Contract> contracts = Lists.newArrayList();
+        for (final Contract contract : this.contracts){
+            if (contract.contractorId().equals(uniqueId) || contract.employerId().equals(uniqueId))
+                contracts.add(contract);
+        }
+        return contracts;
+    }
+
+    /**
      * @param contractId the contract id
      *
      * @return an instance of contract id, if it's available

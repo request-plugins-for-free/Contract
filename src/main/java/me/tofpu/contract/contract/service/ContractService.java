@@ -38,6 +38,13 @@ public interface ContractService {
     Optional<Contract> getContractorContract(final UUID contractorId);
 
     /**
+     * @param uniqueId the contractor/employer id
+     *
+     * @return the contracts made/accepted by unique id
+     */
+    List<Contract> of(final UUID uniqueId);
+
+    /**
      * @param contractId the contract id
      *
      * @return an instance of contract id, if it's available
