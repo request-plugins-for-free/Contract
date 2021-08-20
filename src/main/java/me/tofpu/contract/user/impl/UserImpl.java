@@ -3,9 +3,7 @@ package me.tofpu.contract.user.impl;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.User;
-import me.tofpu.contract.user.properties.stars.review.UserReview;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,29 +13,20 @@ public class UserImpl implements User {
     private final UUID uniqueId;
     private Contract currentContract;
     private double totalRating;
-    private final List<UserReview> ratedBy;
 
     public UserImpl(final UUID uniqueId) {
         this.uniqueId = uniqueId;
-        this.ratedBy = Lists.newArrayList();
-    }
-
-    public UserImpl(final UUID uniqueId, final List<UserReview> ratedBy) {
-        this.uniqueId = uniqueId;
-        this.ratedBy = ratedBy;
     }
 
     public UserImpl(
             final String name,
             final UUID uniqueId,
             final Contract currentContract,
-            final double totalRating,
-            final List<UserReview> ratedBy) {
+            final double totalRating) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.currentContract = currentContract;
         this.totalRating = totalRating;
-        this.ratedBy = ratedBy;
     }
 
     /**
@@ -73,7 +62,7 @@ public class UserImpl implements User {
     }
 
     /**
-     * @param contract the current contract the user is in
+     * @param currentContract the current contract the user is in
      */
     @Override
     public void currentContract(final Contract currentContract) {
@@ -85,6 +74,7 @@ public class UserImpl implements User {
      */
     @Override
     public double totalRating() {
+        // FIXME: 8/20/2021 
         return totalRating;
     }
 
@@ -95,14 +85,6 @@ public class UserImpl implements User {
     public double averageRating() {
         // TODO: GOOGLE HOW TO GET AVERAGE NUMBER, ETC
         return 0;
-    }
-
-    /**
-     * @return list of reviews whom rated this user
-     */
-    @Override
-    public List<UserReview> ratedBy() {
-        return ratedBy;
     }
 
     @Override

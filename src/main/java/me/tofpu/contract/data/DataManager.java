@@ -67,7 +67,7 @@ public class DataManager {
     }
 
     private User getAndRegisterUser(final Player player){
-        final User user = UserFactory.create(player.getName(), player.getUniqueId(), Lists.newArrayList());
+        final User user = UserFactory.create(player.getName(), player.getUniqueId());
         userService.registerUser(user);
 
         return user;
