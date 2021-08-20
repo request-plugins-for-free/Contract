@@ -1,7 +1,6 @@
 package me.tofpu.contract.user.service.impl;
 
 import com.google.common.collect.Lists;
-import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.factory.UserFactory;
@@ -56,6 +55,17 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * This will remove the user associated with the same unique id
+     *
+     * @param uniqueId user unique id
+     */
+    @Override
+    public void removeUser(final UUID uniqueId) {
+        final Optional<User> user = getUser(uniqueId);
+        user.ifPresent(this.users::remove);
+    }
+
+    /**
      * Saves all the users to that specific directory
      *
      * @param directory the directory to save all the users data
@@ -63,7 +73,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveAll(final File directory) {
         for (final User user : this.users){
-            final File file = new File(directory, user.name());
+            if (user == null || user.uniqueId() == null) return;
+
+            final File file = new File(directory, user.uniqueId() + ".json");
             if (!file.exists()) {
                 try {
                     file.createNewFile();
@@ -77,6 +89,7 @@ public class UserServiceImpl implements UserService {
                 e.printStackTrace();
             }
         }
+        this.users.clear();
     }
 
     private void addUser(final User user){

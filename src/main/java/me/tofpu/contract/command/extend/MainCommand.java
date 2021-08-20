@@ -11,6 +11,7 @@ import me.tofpu.contract.contract.review.ContractReview;
 import me.tofpu.contract.contract.review.factory.ContractReviewFactory;
 import me.tofpu.contract.user.service.UserService;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -28,35 +29,56 @@ public class MainCommand extends ExtraBaseCommand {
         this.contractService = contractService;
     }
 
+    @Override
+    @Private
+    @HelpCommand
+    public void onHelp(final CommandSender sender) {
+        super.onHelp(sender);
+    }
+
+    @Override
+    @Private
+    @CatchUnknown
+    public void onUnknownCommand(final CommandSender sender) {
+        super.onUnknownCommand(sender);
+    }
+
     @Subcommand("create")
     @CommandAlias("create")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players @range:1-500 @range:1-2000")
     @Syntax("<player> <contract-time-in-minutes> <contract-amount> <description>")
     @CommandPermission("contract.create")
-    public void onCreate(final Player employer, @Split String[] args){
-        final Player contractor = Bukkit.getPlayer(args[0]);
+    public void onCreate(final Player employer, final String playerName, final long length, final double amount, final String description){
+        final Player contractor = Bukkit.getPlayerExact(playerName);
         if (contractor == null || !contractor.isOnline()){
             // TODO: TARGET HAS TO BE ONLINE
+            employer.sendMessage("target is not online");
             return;
         }
-        final long length = Long.parseLong(args[1]);
-        final double amount = Double.parseDouble(args[2]);
-        final String description = args[3];
-
         // TODO: CHECK IF THE EMPLOYER HAS ENOUGH MONEY
 
         final Optional<User> optionalEmployer = userService.getUser(employer.getUniqueId());
-        if (!optionalEmployer.isPresent()) return;
+        if (!optionalEmployer.isPresent()){
+            employer.sendMessage("you do not have a user registered");
+            return;
+        }
         final Optional<User> optionalContractor = userService.getUser(contractor.getUniqueId());
-        if (!optionalContractor.isPresent()) return;
+        if (!optionalContractor.isPresent()){
+            employer.sendMessage("the target does not have a user registered");
+            return;
+        }
 
         final Contract contract = ContractFactory.create(
                 employer.getName(), employer.getUniqueId(),
                 contractor.getName(), contractor.getUniqueId(),
                 description, length, amount);
 
+        optionalEmployer.get().currentContract(contract);
         optionalContractor.get().currentContract(contract);
+
+        contractService.registerContract(contract);
         // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN MADE!
+        employer.sendMessage("It's made!");
     }
 
     @Subcommand("rate")
@@ -83,7 +105,6 @@ public class MainCommand extends ExtraBaseCommand {
             description.append(args[i]);
         }
 
-        final ContractReview review = ContractReviewFactory.create(rating, description.toString());
         // TODO: MESSAGE THE CONTRACTOR SAYING THE EMPLOYER HAS RATED YOU
         // TODO: MESSAGE THE EMPLOYER SAYING YOU'VE SUCCESSFULLY RATED THE EMPLOYER
 
@@ -104,15 +125,6 @@ public class MainCommand extends ExtraBaseCommand {
         // > Review
         // Rate: 1 stars
         // Review: this motherfucker' somehow made it worse & stole my fuckin' money, I ain't hirin' nobody no more.
-        final String format =
-                " &6&l&m*&r Contract &e%contract-id%:\n" +
-                        "&eEmployer: &6%employer-name%\n" +
-                        "&eDescription: &6%description%\n" +
-                        "&eLength: &6%length%" +
-                        "&eMoney: &6%money%\n" +
-                        "&6&l&m*&r Review\n" +
-                        "Rate: %rate% stars" +
-                        "Review: %review%";
 
         final StringBuilder builder = new StringBuilder();
         if (showAll){
@@ -135,14 +147,14 @@ public class MainCommand extends ExtraBaseCommand {
 
     private String formatContract(final Contract contract){
         final String format =
-                " &6&l&m*&r Contract &e%contract-id%:\n" +
-                        "&eEmployer: &6%employer-name%\n" +
-                        "&eDescription: &6%description%\n" +
-                        "&eLength: &6%length%" +
-                        "&eMoney: &6%money%\n" +
-                        "&6&l&m*&r Review\n" +
-                        "Rate: %rate% stars" +
-                        "Review: %review%";
+                " &6&l&m*&r &6Contract &e%contract-id%:\n" +
+                        "  &6&l&m*&r &eEmployer: &6%employer-name%\n" +
+                        "  &6&l&m*&r &eDescription: &6%description%\n" +
+                        "  &6&l&m*&r &eLength: &6%length%\n" +
+                        "  &6&l&m*&r &eMoney: &6%money%\n" +
+                        " &6&l&m*&r &6Review\n" +
+                        "  &6&l&m*&r &eRate: &6%rate% &estars\n" +
+                        "  &6&l&m*&r &eReview: &6%review%";
         final ContractReview review = contract.review();
 
         return Util.WordReplacer.replace(format,

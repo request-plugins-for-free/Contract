@@ -3,14 +3,16 @@ package me.tofpu.contract.contract.impl;
 import me.tofpu.contract.ContractPlugin;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.review.ContractReview;
-import me.tofpu.contract.contract.review.impl.ContractReviewImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class ContractImpl implements Contract {
@@ -45,20 +47,21 @@ public class ContractImpl implements Contract {
         this.amount = amount;
 
         // This is for ending the contract once it has reached it's supposedly length
-        Bukkit.getScheduler().runTaskTimerAsynchronously(ContractPlugin.getPlugin(ContractPlugin.class), new Consumer<BukkitTask>() {
+        new BukkitRunnable() {
             @Override
-            public void accept(final BukkitTask bukkitTask) {
-                // returns true if the time passed the contract's length
-                if (hasEnded()){
-                    bukkitTask.cancel();
+            public void run() {
+                if (hasEnded()) {
+                    cancel();
 
                     //TODO: USE THE PROPER CLASS DEPENDENCY LATER, I'LL FIGURE IT OUT
-                    Bukkit.getScheduler().runTask(ContractPlugin.getPlugin(ContractPlugin.class), new Consumer<BukkitTask>() {
+                    Bukkit.getScheduler().runTask(ContractPlugin.getPlugin(ContractPlugin.class), new BukkitRunnable() {
                         @Override
-                        public void accept(final BukkitTask bukkitTask) {
+                        public void run() {
                             final Player employer = Bukkit.getPlayer(employerId());
                             final Player contractor = Bukkit.getPlayer(contractorId());
 
+                            employer.sendMessage("Completed!");
+                            contractor.sendMessage("Completed!");
                             // TODO: SEND MESSAGE SAYING THE CONTRACT HAS COMPLETED
                             // TODO: SEND CONTRACT AMOUNT TO THE CONTRACTOR
                             // TODO: HAVE THE EMPLOYER RATE THE CONTRACTOR? THROUGH A COMMAND MAYBE?
@@ -66,7 +69,7 @@ public class ContractImpl implements Contract {
                     });
                 }
             }
-        }, 0, 20);
+        }.runTaskTimerAsynchronously(ContractPlugin.getPlugin(ContractPlugin.class), 0, 20);
     }
 
     /**
@@ -130,7 +133,7 @@ public class ContractImpl implements Contract {
      */
     @Override
     public Duration getDuration() {
-        return Duration.ofNanos(startedAt() - System.nanoTime());
+        return Duration.ofNanos(System.nanoTime() - startedAt());
     }
 
     /**
@@ -176,7 +179,7 @@ public class ContractImpl implements Contract {
 
     @Override
     public UUID id() {
-        return id;
+        return this.id;
     }
 
     @Override
@@ -195,11 +198,16 @@ public class ContractImpl implements Contract {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ContractImpl{");
-        sb.append("employerId=").append(employerId);
+        sb.append("id=").append(id);
+        sb.append(", employerName='").append(employerName).append('\'');
+        sb.append(", employerId=").append(employerId);
+        sb.append(", contractorName='").append(contractorName).append('\'');
         sb.append(", contractorId=").append(contractorId);
+        sb.append(", review=").append(review);
         sb.append(", startedAt=").append(startedAt);
         sb.append(", length=").append(length);
         sb.append(", amount=").append(amount);
+        sb.append(", description='").append(description).append('\'');
         sb.append('}');
         return sb.toString();
     }

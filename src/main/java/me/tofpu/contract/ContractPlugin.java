@@ -5,6 +5,7 @@ import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
 import me.tofpu.contract.data.DataManager;
+import me.tofpu.contract.data.listener.PlayerQuitListener;
 import me.tofpu.contract.user.factory.UserFactory;
 import me.tofpu.contract.user.listener.PlayerJoinListener;
 import me.tofpu.contract.user.service.UserService;
@@ -29,6 +30,8 @@ public final class ContractPlugin extends JavaPlugin {
         ContractFactory.initialize(contractService, userService, dataManager);
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(dataManager), this);
+
     }
 
     private void initializeData(){
@@ -36,7 +39,7 @@ public final class ContractPlugin extends JavaPlugin {
     }
 
     private void initializeCommand(){
-        new CommandHandler(this, userService, contractService);
+        new CommandHandler(this, userService, contractService).initialize();
     }
 
     @Override
@@ -45,10 +48,15 @@ public final class ContractPlugin extends JavaPlugin {
         initializeFactories();
         initializeData();
         initializeCommand();
+
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
+
+        dataManager.load();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        dataManager.save();
     }
 }

@@ -3,16 +3,15 @@ package me.tofpu.contract.user.adapter;
 import com.google.common.collect.Lists;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.factory.UserFactory;
-import me.tofpu.contract.contract.review.ContractReview;
-import me.tofpu.contract.contract.review.factory.ContractReviewFactory;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class UserAdapter extends TypeAdapter<User> {
@@ -24,7 +23,17 @@ public class UserAdapter extends TypeAdapter<User> {
         out.name("unique-id").value(value.uniqueId().toString());
 
         out.name("current-contract");
-        DataManager.GSON.toJson(value.currentContract(), Contract.class, out);
+        Optional<Contract> contract = value.currentContract();
+
+        System.out.println(value.name());
+        if (contract.isPresent()) {
+            System.out.println("current-contract: " + contract.get());
+            DataManager.GSON.toJson(contract.get(), Contract.class, out);
+        }
+        else {
+            System.out.println("current-contract: null");
+            out.nullValue();
+        }
 
         out.name("total-rating").value(value.totalRating());
 
@@ -51,9 +60,12 @@ public class UserAdapter extends TypeAdapter<User> {
                 case "total-rating":
                     totalRating = in.nextDouble();
                     break;
-                case "current-current":
-                    currentContract = DataManager.GSON.getAdapter(Contract.class).read(in);
+                case "current-contract":
+                    if (in.peek() != JsonToken.NULL)
+                        currentContract = DataManager.GSON.getAdapter(Contract.class).read(in);
+                    else in.nextNull();
                     break;
+                default:
             }
         }
 

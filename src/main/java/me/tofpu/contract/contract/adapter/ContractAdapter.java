@@ -2,6 +2,7 @@ package me.tofpu.contract.contract.adapter;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
@@ -76,21 +77,25 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                     break;
                 case "review":
                     in.beginArray();
+                    in.beginObject();
                     int reviewRate = -1;
                     String reviewDescription = null;
                     while (in.hasNext()){
-                        in.beginObject();
                         switch (in.nextName()){
                             case "rate":
                                 reviewRate = in.nextInt();
                                 break;
                             case "description":
-                                reviewDescription = in.nextString();
+                                if (in.peek() != JsonToken.NULL)
+                                    reviewDescription = in.nextString();
+                                else in.nextNull();
                                 break;
                         }
-                        in.endObject();
                         review = ContractReviewFactory.create(reviewRate, reviewDescription);
                     }
+                    in.endObject();
+                    in.endArray();
+                    break;
                 case "description":
                     description = in.nextString();
                     break;

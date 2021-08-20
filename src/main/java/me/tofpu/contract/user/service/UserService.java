@@ -28,6 +28,13 @@ public interface UserService {
     User getUserOrDefault(final UUID uniqueId);
 
     /**
+     * This will remove the user associated with the same unique id
+     *
+     * @param uniqueId user unique id
+     */
+    void removeUser(final UUID uniqueId);
+
+    /**
      * Saves all the users to that specific directory
      *
      * @param directory the directory to save all the users data

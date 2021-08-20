@@ -22,10 +22,9 @@ public class ContractFactory {
     }
 
     public static Contract create(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long startedAt, final long length, final double amount){
-        final Contract contract = new ContractImpl(id, employerName, employerId, contractorName, contractorId, review, description, startedAt, length, amount);
 
-        contractService.registerContract(contract);
-        return contract;
+        //        contractService.registerContract(contract);
+        return new ContractImpl(id, employerName, employerId, contractorName, contractorId, review, description, startedAt, length, amount);
     }
 
     public static Contract create(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long length, final double amount){

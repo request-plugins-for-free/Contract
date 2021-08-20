@@ -97,6 +97,7 @@ public class ContractServiceImpl implements ContractService {
                 e.printStackTrace();
             }
         }
+
         if (!contracts.isEmpty()) this.contracts.addAll(contracts);
     }
 
@@ -108,7 +109,8 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public void saveAll(final File directory) {
         for (final Contract contract : this.contracts){
-            final File file = new File(directory, contract.id().toString());
+            if (contract == null || contract.id() == null) continue;
+            final File file = new File(directory, contract.id() + ".json");
             if (!file.exists()) {
                 try {
                     file.createNewFile();
