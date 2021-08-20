@@ -2,6 +2,8 @@ package me.tofpu.contract.contract.impl;
 
 import me.tofpu.contract.ContractPlugin;
 import me.tofpu.contract.contract.Contract;
+import me.tofpu.contract.contract.review.ContractReview;
+import me.tofpu.contract.contract.review.impl.ContractReviewImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -20,18 +22,22 @@ public class ContractImpl implements Contract {
     private String contractorName;
     private final UUID contractorId;
 
+    private final ContractReview review;
+
     private final long startedAt;
     private final long length;
     private final double amount;
     private final String description;
 
-    public ContractImpl(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount) {
+    public ContractImpl(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long startedAt, final long length, final double amount) {
         this.id = id;
         this.employerName = employerName;
         this.employerId = employerId;
 
         this.contractorName = contractorName;
         this.contractorId = contractorId;
+
+        this.review = review;
 
         this.description = description;
         this.startedAt = startedAt;
@@ -109,6 +115,14 @@ public class ContractImpl implements Contract {
     @Override
     public void contractorName(final String newName) {
         this.contractorName = newName;
+    }
+
+    /**
+     * @return the contract review instance
+     */
+    @Override
+    public ContractReview review() {
+        return review;
     }
 
     /**

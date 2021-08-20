@@ -1,19 +1,11 @@
 package me.tofpu.contract.contract;
 
+import me.tofpu.contract.contract.review.ContractReview;
+
 import java.time.Duration;
 import java.util.UUID;
 
 public interface Contract {
-
-//    /**
-//     * @return the employer (whom created the contract)
-//     */
-//    User getEmployer();
-//
-//    /**
-//     * @return the contractor (whom accepted the contract)
-//     */
-//    User getContractor();
 
     /**
      * @return the employer name (whom created the contract)
@@ -46,6 +38,11 @@ public interface Contract {
      * @param newName new contractor name
      */
     void contractorName(final String newName);
+
+    /**
+     * @return the contract review instance
+     */
+    ContractReview review();
 
     /**
      * @return the duration of the contract

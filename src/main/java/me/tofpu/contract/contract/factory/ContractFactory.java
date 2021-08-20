@@ -1,8 +1,9 @@
 package me.tofpu.contract.contract.factory;
 
-import me.tofpu.contract.Util;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.impl.ContractImpl;
+import me.tofpu.contract.contract.review.ContractReview;
+import me.tofpu.contract.contract.review.factory.ContractReviewFactory;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.user.service.UserService;
@@ -20,15 +21,15 @@ public class ContractFactory {
         ContractFactory.userService = userService;
     }
 
-    public static Contract create(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long startedAt, final long length, final double amount){
-        final Contract contract = new ContractImpl(id, employerName, employerId, contractorName, contractorId, description, startedAt, length, amount);
+    public static Contract create(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long startedAt, final long length, final double amount){
+        final Contract contract = new ContractImpl(id, employerName, employerId, contractorName, contractorId, review, description, startedAt, length, amount);
 
         contractService.registerContract(contract);
         return contract;
     }
 
     public static Contract create(final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final String description, final long length, final double amount){
-        return create(UUID.randomUUID(), employerName, employerId, contractorName, contractorId, description, System.nanoTime(), length, amount);
+        return create(UUID.randomUUID(), employerName, employerId, contractorName, contractorId, ContractReviewFactory.create(), description, System.nanoTime(), length, amount);
     }
 
 //    public static Contract create(final UUID employerId, final String contractorName, final long length, final double amount, final String description){

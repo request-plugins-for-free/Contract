@@ -5,6 +5,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
+import me.tofpu.contract.contract.review.ContractReview;
+import me.tofpu.contract.contract.review.factory.ContractReviewFactory;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -21,6 +23,12 @@ public class ContractAdapter extends TypeAdapter<Contract> {
 
         out.name("contractor-name").value(value.contractorName());
         out.name("contractor-unique-id").value(value.contractorId().toString());
+
+        final ContractReview review = value.review();
+        out.name("review").beginArray().beginObject();
+        out.name("rate").value(review.rate());
+        out.name("description").value(review.description());
+        out.endObject().endArray();
 
         out.name("description").value(value.description());
         out.name("amount").value(value.amount());
@@ -40,6 +48,8 @@ public class ContractAdapter extends TypeAdapter<Contract> {
 
         String contractorName = "";
         UUID contractorUniqueId = null;
+
+        ContractReview review = null;
 
         String description = "";
         double amount = 0;
@@ -64,6 +74,23 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                 case "contractor-unique-id":
                     contractorUniqueId = UUID.fromString(in.nextString());
                     break;
+                case "review":
+                    in.beginArray();
+                    int reviewRate = -1;
+                    String reviewDescription = null;
+                    while (in.hasNext()){
+                        in.beginObject();
+                        switch (in.nextName()){
+                            case "rate":
+                                reviewRate = in.nextInt();
+                                break;
+                            case "description":
+                                reviewDescription = in.nextString();
+                                break;
+                        }
+                        in.endObject();
+                        review = ContractReviewFactory.create(reviewRate, reviewDescription);
+                    }
                 case "description":
                     description = in.nextString();
                     break;
@@ -80,6 +107,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         }
 
         in.endObject();
-        return ContractFactory.create(id, employerName, employerUniqueId, contractorName, contractorUniqueId, description, startedAt, length, amount);
+        return ContractFactory.create(id, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, startedAt, length, amount);
     }
 }
