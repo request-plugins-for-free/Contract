@@ -21,6 +21,13 @@ public interface UserService {
     Optional<User> getUser(final UUID uniqueId);
 
     /**
+     * @param name the user name
+     *
+     * @return the user instance, if it's available
+     */
+    Optional<User> getUser(final String name);
+
+    /**
      * @param uniqueId the user unique id
      *
      * @return the user instance or a brand new instance if it's not available

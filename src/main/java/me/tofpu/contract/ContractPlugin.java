@@ -1,6 +1,7 @@
 package me.tofpu.contract;
 
 import me.tofpu.contract.command.CommandHandler;
+import me.tofpu.contract.contract.runnable.ContractRunnable;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
 import me.tofpu.contract.data.DataManager;
@@ -26,6 +27,7 @@ public final class ContractPlugin extends JavaPlugin {
 
     private void initializeFactories() {
         UserFactory.initialize(userService);
+        ContractRunnable.initialize(userService);
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(dataManager), this);

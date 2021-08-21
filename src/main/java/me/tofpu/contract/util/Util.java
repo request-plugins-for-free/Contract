@@ -1,4 +1,4 @@
-package me.tofpu.contract;
+package me.tofpu.contract.util;
 
 import co.aikar.commands.RegisteredCommand;
 import com.google.common.collect.Maps;

@@ -2,7 +2,7 @@ package me.tofpu.contract.command.base;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.RegisteredCommand;
-import me.tofpu.contract.Util;
+import me.tofpu.contract.util.Util;
 import org.bukkit.command.CommandSender;
 
 import java.util.Map;

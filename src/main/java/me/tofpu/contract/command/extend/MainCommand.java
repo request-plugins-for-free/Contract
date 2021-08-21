@@ -1,7 +1,7 @@
 package me.tofpu.contract.command.extend;
 
 import co.aikar.commands.annotation.*;
-import me.tofpu.contract.Util;
+import me.tofpu.contract.util.Util;
 import me.tofpu.contract.command.base.ExtraBaseCommand;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
@@ -9,6 +9,8 @@ import me.tofpu.contract.contract.review.ContractReview;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.service.UserService;
+import me.tofpu.contract.util.confirmation.Confirmation;
+import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -47,40 +49,73 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandCompletion("@players")
     @Syntax("<player> <contract-time-in-minutes> <contract-amount> <description>")
     @CommandPermission("contract.create")
-    public void onCreate(final Player playerEmployer, final String playerName, final long length, final double amount, final String description) {
-        final Player playerContractor = Bukkit.getPlayerExact(playerName);
-        if (playerContractor == null || !playerContractor.isOnline()) {
+    public void onCreate(final User employer, final User contractor, final long length, final double amount, final String description) {
+        if (employer == null || contractor == null) return;
+
+        // if player instance of contractor doesn't exist
+        if (!contractor.isPresent()) {
             // TODO: TARGET HAS TO BE ONLINE
-            playerEmployer.sendMessage("target is not online");
+            contractor.ifPresent(player -> player.sendMessage("target is not online"));
             return;
         }
         // TODO: CHECK IF THE EMPLOYER HAS ENOUGH MONEY
 
-        final Optional<User> optionalEmployer = userService.getUser(playerEmployer.getUniqueId());
-        if (!optionalEmployer.isPresent()) {
-            playerEmployer.sendMessage("you do not have a user registered");
-            return;
-        }
-        final Optional<User> optionalContractor = userService.getUser(playerContractor.getUniqueId());
-        if (!optionalContractor.isPresent()) {
-            playerEmployer.sendMessage("the target does not have a user registered");
-            return;
-        }
-        final User employer = optionalEmployer.get();
-        final User contractor = optionalContractor.get();
+        // if employer has a current contract
         if (employer.currentContract().isPresent()) {
-            // TODO: SAY YOU HAVE TO COMPLETE YOUR CONTRACT FIRST
+            // TODO: SAY YOU HAVE TO COMPLETE YOUR CURRENT CONTRACT FIRST
             return;
         }
-
         final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length, amount);
+        Confirmation.send(employer.uniqueId(), contractor.uniqueId(), contract);
 
-        optionalEmployer.get().currentContract(contract);
-        optionalContractor.get().currentContract(contract);
+        // TODO: SEND MESSAGE TO EMPLOYER SAYING THE REQUEST HAS BEEN MADE
+        employer.ifPresent(player -> player.sendMessage("You have sent a confirmation to " + contractor.name()));
+        contractor.ifPresent(player -> player.sendMessage(employer.name() + " has sent you a contract, you can accept/deny the contract by typing /contractor accept/deny (employer)"));
+
+        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN MADE!
+        employer.ifPresent(player -> player.sendMessage("It's made!"));
+    }
+
+    @Subcommand("accept")
+    @CommandAlias("accept")
+    @CommandPermission("@players")
+    @Syntax("<employer>")
+    public void accept(final User contractor, final User employer, final Confirmation confirmation) {
+        // TODO: RELOAD BUG!
+        if (contractor == null || employer == null) return;
+        if (confirmation == null) {
+            // TODO: SEND MESSAGE SAYING YOU DO NOT HAVE A PENDING CONFIRMATION
+            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation..."));
+            return;
+        }
+        final Contract contract = confirmation.accept();
+
+        employer.currentContract(contract);
+        contractor.currentContract(contract);
 
         contractService.registerContract(contract);
-        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN MADE!
-        playerEmployer.sendMessage("It's made!");
+
+        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN ACCEPTED
+        contractor.ifPresent(player -> player.sendMessage("You have accepted " + employer.name() + " contract request!"));
+        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has accepted your contract request!"));
+    }
+
+    @Subcommand("deny")
+    @CommandAlias("deny")
+    @CommandPermission("@players")
+    @Syntax("<employer>")
+    public void deny(final User contractor, final User employer, final Confirmation confirmation) {
+        // TODO: RELOAD BUG!
+        if (contractor == null || employer == null) return;
+        if (confirmation == null) {
+            // TODO: SEND MESSAGE SAYING YOU DO NOT HAVE A PENDING CONFIRMATION
+            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation from " + player.getName()));
+            return;
+        }
+        ConfirmationRegistry.getConfirmationManager().invalidate(confirmation);
+        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN DENIED
+        contractor.ifPresent(player -> player.sendMessage("You have denied " + employer.name() + " contract request!"));
+        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has denied your contract request!"));
     }
 
     @Subcommand("rate")

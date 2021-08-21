@@ -13,11 +13,15 @@ import java.util.UUID;
 public class ContractImpl implements Contract {
     private final UUID id;
     private final ContractRunnable runnable;
+
     private final UUID employerId;
     private final UUID contractorId;
+
     private final ContractReview review;
+
     private final long startedAt;
     private final double amount;
+
     private final String description;
     private String employerName;
     private String contractorName;

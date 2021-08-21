@@ -2,9 +2,12 @@ package me.tofpu.contract.user;
 
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.properties.stars.Stars;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface User extends Stars {
 
@@ -32,4 +35,11 @@ public interface User extends Stars {
      * @param currentContract the current contract the user is in
      */
     void currentContract(final Contract currentContract);
+
+    /**
+     * @return returns true if player instance exists otherwise false
+     */
+    boolean isPresent();
+
+    void ifPresent(final Consumer<Player> consumer);
 }

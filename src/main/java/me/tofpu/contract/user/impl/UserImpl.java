@@ -2,10 +2,13 @@ package me.tofpu.contract.user.impl;
 
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.User;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class UserImpl implements User {
     private final UUID uniqueId;
@@ -62,6 +65,22 @@ public class UserImpl implements User {
     @Override
     public void currentContract(final Contract currentContract) {
         this.currentContract = currentContract;
+    }
+
+    /**
+     * @return returns true if player instance exists otherwise false
+     */
+    @Override
+    public boolean isPresent() {
+        // TODO: CACHE THIS POSSIBLY?
+        return Bukkit.getPlayer(this.uniqueId) != null;
+    }
+
+    @Override
+    public void ifPresent(final Consumer<Player> consumer) {
+        // TODO: CACHE THIS POSSIBLY?
+        final Player player = Bukkit.getPlayer(this.uniqueId);
+        if (player != null) consumer.accept(player);
     }
 
     /**
