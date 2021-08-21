@@ -8,7 +8,6 @@ import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.contract.review.ContractReview;
-import me.tofpu.contract.contract.review.factory.ContractReviewFactory;
 import me.tofpu.contract.user.service.UserService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -45,32 +44,38 @@ public class MainCommand extends ExtraBaseCommand {
 
     @Subcommand("create")
     @CommandAlias("create")
-    @CommandCompletion("@players @range:1-500 @range:1-2000")
+    @CommandCompletion("@players")
     @Syntax("<player> <contract-time-in-minutes> <contract-amount> <description>")
     @CommandPermission("contract.create")
-    public void onCreate(final Player employer, final String playerName, final long length, final double amount, final String description){
-        final Player contractor = Bukkit.getPlayerExact(playerName);
-        if (contractor == null || !contractor.isOnline()){
+    public void onCreate(final Player playerEmployer, final String playerName, final long length, final double amount, final String description){
+        final Player playerContractor = Bukkit.getPlayerExact(playerName);
+        if (playerContractor == null || !playerContractor.isOnline()){
             // TODO: TARGET HAS TO BE ONLINE
-            employer.sendMessage("target is not online");
+            playerEmployer.sendMessage("target is not online");
             return;
         }
         // TODO: CHECK IF THE EMPLOYER HAS ENOUGH MONEY
 
-        final Optional<User> optionalEmployer = userService.getUser(employer.getUniqueId());
+        final Optional<User> optionalEmployer = userService.getUser(playerEmployer.getUniqueId());
         if (!optionalEmployer.isPresent()){
-            employer.sendMessage("you do not have a user registered");
+            playerEmployer.sendMessage("you do not have a user registered");
             return;
         }
-        final Optional<User> optionalContractor = userService.getUser(contractor.getUniqueId());
+        final Optional<User> optionalContractor = userService.getUser(playerContractor.getUniqueId());
         if (!optionalContractor.isPresent()){
-            employer.sendMessage("the target does not have a user registered");
+            playerEmployer.sendMessage("the target does not have a user registered");
+            return;
+        }
+        final User employer = optionalEmployer.get();
+        final User contractor = optionalContractor.get();
+        if (employer.currentContract().isPresent()){
+            // TODO: SAY YOU HAVE TO COMPLETE YOUR CONTRACT FIRST
             return;
         }
 
         final Contract contract = ContractFactory.create(
-                employer.getName(), employer.getUniqueId(),
-                contractor.getName(), contractor.getUniqueId(),
+                employer.name(), employer.uniqueId(),
+                contractor.name(), contractor.uniqueId(),
                 description, length, amount);
 
         optionalEmployer.get().currentContract(contract);
@@ -78,18 +83,23 @@ public class MainCommand extends ExtraBaseCommand {
 
         contractService.registerContract(contract);
         // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN MADE!
-        employer.sendMessage("It's made!");
+        playerEmployer.sendMessage("It's made!");
     }
 
     @Subcommand("rate")
     @CommandAlias("rate")
-    @CommandCompletion("@selfContractsId @range:0-5")
+    @CommandCompletion("@contractsEnded @range:0-5")
     @Syntax("<contract-id> <out-of-five> <review>")
-    public void onRate(final Player employer, @Split String[] args){
-        final UUID contractId = UUID.fromString(args[0]);
+    public void onRate(final Player employer, final String id, final double rate, final String description){
+        final UUID contractId = UUID.fromString(id);
         final Optional<Contract> optional = contractService.getContractById(contractId);
         if (!optional.isPresent()){
             // TODO: SAY THE CONTRACT DOESN'T EXIST
+            return;
+        }
+
+        if (rate < 0 || rate > 5){
+            // TODO: SAY THE RATE CANNOT BE LOWER THAN 0 OR HIGHER THAN 5
             return;
         }
 
@@ -99,21 +109,22 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
 
-        final double rating = Double.parseDouble(args[1]);
-        StringBuilder description = new StringBuilder();
-        for (int i = 2; i < args.length; i++){
-            description.append(args[i]);
-        }
+//        final double rating = Double.parseDouble(args[1]);
+//        StringBuilder description = new StringBuilder();
+//        for (int i = 2; i < args.length; i++){
+//            description.append(args[i]);
+//        }
 
         // TODO: MESSAGE THE CONTRACTOR SAYING THE EMPLOYER HAS RATED YOU
         // TODO: MESSAGE THE EMPLOYER SAYING YOU'VE SUCCESSFULLY RATED THE EMPLOYER
 
-        contract.review().rate(rating);
-        contract.review().description(description.toString());
+        contract.review().rate(rate);
+        contract.review().description(description);
     }
 
     @Subcommand("history")
     @CommandAlias("history")
+    @CommandCompletion("contractsId")
     @Syntax("[contract-id]")
     public void onHistory(final Player player, @co.aikar.commands.annotation.Optional String id){
         final boolean showAll = id == null || id.isEmpty();
@@ -130,7 +141,7 @@ public class MainCommand extends ExtraBaseCommand {
         if (showAll){
             final List<Contract> contracts = contractService.of(player.getUniqueId());
             for (final Contract contract : contracts){
-                if (builder.length() != 0) builder.append("\n");
+                if (builder.length() > 0) builder.append("\n");
                 builder.append(formatContract(contract));
             }
         } else {

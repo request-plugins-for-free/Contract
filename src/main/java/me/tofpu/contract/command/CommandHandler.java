@@ -6,6 +6,7 @@ import me.tofpu.contract.command.extend.MainCommand;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.service.UserService;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -22,18 +23,28 @@ public class CommandHandler {
         this.contractService = contractService;
     }
 
+    private List<String> contractsId(final Player player, boolean hasFinished){
+        final List<String> ids = Lists.newArrayList();
+
+        for (final Contract contract : contractService.of(player.getUniqueId())){
+            if (hasFinished){
+                if (contract.hasEnded()) ids.add(contract.id().toString());
+            } else ids.add(contract.id().toString());
+        }
+
+        return ids;
+    }
+
     public void initialize(){
         // command completions
         commandManager.getCommandCompletions()
-                .registerCompletion("selfContractsId", context -> {
-                    final List<Contract> contracts = contractService.of(context.getPlayer().getUniqueId());
-                    final List<String> ids = Lists.newArrayList();
+                .registerCompletion("contractsId", context -> {
+                    return contractsId(context.getPlayer(), false);
+                });
 
-                    for (final Contract contract : contracts){
-                        if (contract.hasEnded()) ids.add(contract.id().toString());
-                    }
-
-                    return ids;
+        commandManager.getCommandCompletions()
+                .registerCompletion("contractsEnded", context -> {
+                    return contractsId(context.getPlayer(), true);
                 });
 
         // command registrations
