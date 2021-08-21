@@ -1,38 +1,33 @@
 package me.tofpu.contract.contract.impl;
 
-import me.tofpu.contract.ContractPlugin;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.review.ContractReview;
+import me.tofpu.contract.contract.runnable.ContractRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 public class ContractImpl implements Contract {
     private final UUID id;
-
-    private String employerName;
+    private final ContractRunnable runnable;
     private final UUID employerId;
-
-    private String contractorName;
     private final UUID contractorId;
-
     private final ContractReview review;
-
     private final long startedAt;
-    private final long length;
     private final double amount;
     private final String description;
+    private String employerName;
+    private String contractorName;
+    private boolean frozen;
+    private long length;
 
-    public ContractImpl(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long startedAt, final long length, final double amount) {
+    public ContractImpl(final UUID id, final boolean frozen, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long startedAt, final long length, final double amount) {
         this.id = id;
+        freeze(frozen);
+
         this.employerName = employerName;
         this.employerId = employerId;
 
@@ -47,29 +42,7 @@ public class ContractImpl implements Contract {
         this.amount = amount;
 
         // This is for ending the contract once it has reached it's supposedly length
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (hasEnded()) {
-                    cancel();
-
-                    //TODO: USE THE PROPER CLASS DEPENDENCY LATER, I'LL FIGURE IT OUT
-                    Bukkit.getScheduler().runTask(ContractPlugin.getPlugin(ContractPlugin.class), new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            final Player employer = Bukkit.getPlayer(employerId());
-                            final Player contractor = Bukkit.getPlayer(contractorId());
-
-                            employer.sendMessage("Completed!");
-                            contractor.sendMessage("Completed!");
-                            // TODO: SEND MESSAGE SAYING THE CONTRACT HAS COMPLETED
-                            // TODO: SEND CONTRACT AMOUNT TO THE CONTRACTOR
-                            // TODO: HAVE THE EMPLOYER RATE THE CONTRACTOR? THROUGH A COMMAND MAYBE?
-                        }
-                    });
-                }
-            }
-        }.runTaskTimerAsynchronously(ContractPlugin.getPlugin(ContractPlugin.class), 0, 20);
+        this.runnable = new ContractRunnable(this);
     }
 
     /**
@@ -118,6 +91,45 @@ public class ContractImpl implements Contract {
     @Override
     public void contractorName(final String newName) {
         this.contractorName = newName;
+    }
+
+    /**
+     * returns true if the timer stopped else, returns false if the timer is ticking
+     *
+     * @return the freeze status
+     */
+    public boolean freeze() {
+        return this.frozen;
+    }
+
+    /**
+     * this will freeze/unfreeze the timer depending on the status parameter
+     *
+     * @param stats the freeze status, false to have it ticking, true to freeze it
+     */
+    public void freeze(final boolean stats) {
+        this.frozen = stats;
+        if (frozen) {
+            // QUESTION
+            // if employer creates contract on 2:15 for 10 minutes
+            // then leaves on 2:20 (spent 5 minutes in total, freezes)
+            // then joins back on 2:25 (5 minutes left, unfreezes)
+            // what should we do?
+
+            // SOLUTION
+            // decrease the length by the amount they spent online
+            // formula: LENGTH - AMOUNT SPENT ONLINE
+            // you fucking genius!! brave!! CLAP CLAP!
+            this.length -= getDuration().toMinutes();
+            if (!this.runnable.isCancelled()) this.runnable.cancel();
+        } else {
+            // trying to get te employer & contractor player instance
+            final Player employer = Bukkit.getPlayer(employerId);
+            final Player contractor = Bukkit.getPlayer(contractorId);
+
+            // if both the employer & contractor are online, ladies and gentlemen, let the timer tickin'!
+            if (employer != null && contractor != null) this.runnable.start();
+        }
     }
 
     /**

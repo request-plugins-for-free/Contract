@@ -5,7 +5,10 @@ import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.data.DataManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +36,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<Contract> getEmployerContracts(final UUID employerId) {
         final List<Contract> contracts = Lists.newArrayList();
-        for (final Contract contract : this.contracts){
+        for (final Contract contract : this.contracts) {
             if (contract.employerId().equals(employerId)) contracts.add(contract);
         }
         return contracts;
@@ -46,7 +49,7 @@ public class ContractServiceImpl implements ContractService {
      */
     @Override
     public Optional<Contract> getContractorContract(final UUID contractorId) {
-        for (final Contract contract : this.contracts){
+        for (final Contract contract : this.contracts) {
             if (contract.contractorId().equals(contractorId)) return Optional.of(contract);
         }
         return Optional.empty();
@@ -60,7 +63,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<Contract> of(final UUID uniqueId) {
         final List<Contract> contracts = Lists.newArrayList();
-        for (final Contract contract : this.contracts){
+        for (final Contract contract : this.contracts) {
             if (contract.contractorId().equals(uniqueId) || contract.employerId().equals(uniqueId))
                 contracts.add(contract);
         }
@@ -74,7 +77,7 @@ public class ContractServiceImpl implements ContractService {
      */
     @Override
     public Optional<Contract> getContractById(final UUID contractId) {
-        for (final Contract contract : this.contracts){
+        for (final Contract contract : this.contracts) {
             if (contract.id().equals(contractId)) return Optional.of(contract);
         }
         return Optional.empty();
@@ -90,8 +93,8 @@ public class ContractServiceImpl implements ContractService {
         if (!directory.exists()) return;
         final List<Contract> contracts = Lists.newArrayList();
 
-        for (final File file : directory.listFiles()){
-            try (final FileReader reader = new FileReader(file)){
+        for (final File file : directory.listFiles()) {
+            try (final FileReader reader = new FileReader(file)) {
                 contracts.add(DataManager.GSON.fromJson(reader, Contract.class));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -108,7 +111,7 @@ public class ContractServiceImpl implements ContractService {
      */
     @Override
     public void saveAll(final File directory) {
-        for (final Contract contract : this.contracts){
+        for (final Contract contract : this.contracts) {
             if (contract == null || contract.id() == null) continue;
             final File file = new File(directory, contract.id() + ".json");
             if (!file.exists()) {
@@ -118,7 +121,7 @@ public class ContractServiceImpl implements ContractService {
                     e.printStackTrace();
                 }
             }
-            try (final FileWriter writer = new FileWriter(file)){
+            try (final FileWriter writer = new FileWriter(file)) {
                 writer.write(DataManager.GSON.toJson(contract, Contract.class));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -126,7 +129,7 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private void addContract(final Contract contract){
+    private void addContract(final Contract contract) {
         this.contracts.add(contract);
     }
 }

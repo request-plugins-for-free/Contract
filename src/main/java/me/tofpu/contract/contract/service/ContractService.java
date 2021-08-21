@@ -1,8 +1,6 @@
 package me.tofpu.contract.contract.service;
 
-import com.google.gson.Gson;
 import me.tofpu.contract.contract.Contract;
-import me.tofpu.contract.user.User;
 
 import java.io.File;
 import java.util.List;
@@ -16,12 +14,12 @@ public interface ContractService {
      */
     void registerContract(final Contract contract);
 
-//    /**
-//     * @param uniqueId the contractor uniqueId (whom accepts contract)
-//     *
-//     * @return a list of available contracts that the contractor accepted
-//     */
-//    List<Contract> getContractorContracts(final UUID uniqueId);
+    //    /**
+    //     * @param uniqueId the contractor uniqueId (whom accepts contract)
+    //     *
+    //     * @return a list of available contracts that the contractor accepted
+    //     */
+    //    List<Contract> getContractorContracts(final UUID uniqueId);
 
     /**
      * @param employerId the employer uniqueId (whom creates a contract)

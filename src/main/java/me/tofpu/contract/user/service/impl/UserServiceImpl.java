@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Optional<User> getUser(final UUID uniqueId) {
-        for (final User user : this.users){
+        for (final User user : this.users) {
             if (user.uniqueId().equals(uniqueId)) return Optional.of(user);
         }
         return Optional.empty();
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void saveAll(final File directory) {
-        for (final User user : this.users){
+        for (final User user : this.users) {
             if (user == null || user.uniqueId() == null) return;
 
             final File file = new File(directory, user.uniqueId() + ".json");
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
                     e.printStackTrace();
                 }
             }
-            try (final FileWriter writer = new FileWriter(file)){
+            try (final FileWriter writer = new FileWriter(file)) {
                 writer.write(DataManager.GSON.toJson(user, User.class));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         this.users.clear();
     }
 
-    private void addUser(final User user){
+    private void addUser(final User user) {
         this.users.add(user);
     }
 }

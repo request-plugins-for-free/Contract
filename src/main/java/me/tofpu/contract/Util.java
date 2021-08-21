@@ -11,12 +11,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Util {
-    public static Optional<UUID> getUniqueId(final String name){
+    public static Optional<UUID> getUniqueId(final String name) {
         final Player player = Bukkit.getPlayerExact(name);
         return Optional.ofNullable(player == null ? null : player.getUniqueId());
     }
 
-    public static String colorize(final String message){
+    public static String colorize(final String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 

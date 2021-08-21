@@ -11,19 +11,20 @@ import java.util.UUID;
 
 public class UserFactory {
     private static UserService userService;
-    public static void initialize(final UserService userService){
+
+    public static void initialize(final UserService userService) {
         UserFactory.userService = userService;
     }
 
-    public static User create(final UUID uniqueId){
+    public static User create(final UUID uniqueId) {
         return create("", uniqueId);
     }
 
-    public static User create(final String name, final UUID uniqueId){
+    public static User create(final String name, final UUID uniqueId) {
         return create(name, uniqueId, null, -1);
     }
 
-    public static User create(final String name, final UUID uniqueId, final Contract currentContract, double totalRating){
+    public static User create(final String name, final UUID uniqueId, final Contract currentContract, double totalRating) {
         final User user = new UserImpl(name, uniqueId, currentContract, totalRating);
         final Player player = Bukkit.getPlayer(uniqueId);
         if (player != null) user.name(player.getName());

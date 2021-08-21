@@ -1,6 +1,5 @@
 package me.tofpu.contract.user.impl;
 
-import com.google.common.collect.Lists;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.User;
 
@@ -9,8 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class UserImpl implements User {
-    private String name;
     private final UUID uniqueId;
+    private String name;
     private Contract currentContract;
     private double totalRating;
 
@@ -18,11 +17,7 @@ public class UserImpl implements User {
         this.uniqueId = uniqueId;
     }
 
-    public UserImpl(
-            final String name,
-            final UUID uniqueId,
-            final Contract currentContract,
-            final double totalRating) {
+    public UserImpl(final String name, final UUID uniqueId, final Contract currentContract, final double totalRating) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.currentContract = currentContract;

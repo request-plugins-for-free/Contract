@@ -18,6 +18,7 @@ public class ContractAdapter extends TypeAdapter<Contract> {
     public void write(final JsonWriter out, final Contract value) throws IOException {
         out.beginObject();
         out.name("id").value(value.id().toString());
+        out.name("frozen").value(value.freeze());
 
         out.name("employer-name").value(value.employerName());
         out.name("employer-unique-id").value(value.employerId().toString());
@@ -43,6 +44,7 @@ public class ContractAdapter extends TypeAdapter<Contract> {
     public Contract read(final JsonReader in) throws IOException {
         in.beginObject();
         UUID id = null;
+        boolean frozen = false;
 
         String employerName = "";
         UUID employerUniqueId = null;
@@ -58,10 +60,13 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         long startedAt = 0;
         long length = 0;
 
-        while (in.hasNext()){
-            switch (in.nextName()){
+        while (in.hasNext()) {
+            switch (in.nextName()) {
                 case "id":
                     id = UUID.fromString(in.nextString());
+                    break;
+                case "frozen":
+                    frozen = in.nextBoolean();
                     break;
                 case "employer-name":
                     employerName = in.nextString();
@@ -80,14 +85,13 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                     in.beginObject();
                     int reviewRate = -1;
                     String reviewDescription = null;
-                    while (in.hasNext()){
-                        switch (in.nextName()){
+                    while (in.hasNext()) {
+                        switch (in.nextName()) {
                             case "rate":
                                 reviewRate = in.nextInt();
                                 break;
                             case "description":
-                                if (in.peek() != JsonToken.NULL)
-                                    reviewDescription = in.nextString();
+                                if (in.peek() != JsonToken.NULL) reviewDescription = in.nextString();
                                 else in.nextNull();
                                 break;
                         }
@@ -112,6 +116,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         }
 
         in.endObject();
-        return ContractFactory.create(id, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, startedAt, length, amount);
+        return ContractFactory.create(id, frozen, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, startedAt, length, amount);
     }
 }

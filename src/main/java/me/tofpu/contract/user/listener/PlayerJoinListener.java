@@ -17,7 +17,7 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    private void onPlayerJoin(final PlayerJoinEvent event){
+    private void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final Optional<User> user = this.dataManager.loadUser(player);
 

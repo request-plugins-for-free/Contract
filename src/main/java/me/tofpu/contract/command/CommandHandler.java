@@ -17,17 +17,17 @@ public class CommandHandler {
     private final UserService userService;
     private final ContractService contractService;
 
-    public CommandHandler(final Plugin plugin, final UserService userService, final ContractService contractService){
+    public CommandHandler(final Plugin plugin, final UserService userService, final ContractService contractService) {
         this.commandManager = new BukkitCommandManager(plugin);
         this.userService = userService;
         this.contractService = contractService;
     }
 
-    private List<String> contractsId(final Player player, boolean hasFinished){
+    private List<String> contractsId(final Player player, boolean hasFinished) {
         final List<String> ids = Lists.newArrayList();
 
-        for (final Contract contract : contractService.of(player.getUniqueId())){
-            if (hasFinished){
+        for (final Contract contract : contractService.of(player.getUniqueId())) {
+            if (hasFinished) {
                 if (contract.hasEnded()) ids.add(contract.id().toString());
             } else ids.add(contract.id().toString());
         }
@@ -35,17 +35,15 @@ public class CommandHandler {
         return ids;
     }
 
-    public void initialize(){
+    public void initialize() {
         // command completions
-        commandManager.getCommandCompletions()
-                .registerCompletion("contractsId", context -> {
-                    return contractsId(context.getPlayer(), false);
-                });
+        commandManager.getCommandCompletions().registerCompletion("contractsId", context -> {
+            return contractsId(context.getPlayer(), false);
+        });
 
-        commandManager.getCommandCompletions()
-                .registerCompletion("contractsEnded", context -> {
-                    return contractsId(context.getPlayer(), true);
-                });
+        commandManager.getCommandCompletions().registerCompletion("contractsEnded", context -> {
+            return contractsId(context.getPlayer(), true);
+        });
 
         // command registrations
         commandManager.registerCommand(new MainCommand(userService, contractService));

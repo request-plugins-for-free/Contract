@@ -1,6 +1,5 @@
 package me.tofpu.contract.user.adapter;
 
-import com.google.common.collect.Lists;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -29,8 +28,7 @@ public class UserAdapter extends TypeAdapter<User> {
         if (contract.isPresent()) {
             System.out.println("current-contract: " + contract.get());
             DataManager.GSON.toJson(contract.get(), Contract.class, out);
-        }
-        else {
+        } else {
             System.out.println("current-contract: null");
             out.nullValue();
         }
