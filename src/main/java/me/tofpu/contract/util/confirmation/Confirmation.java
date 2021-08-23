@@ -1,6 +1,7 @@
 package me.tofpu.contract.util.confirmation;
 
 import me.tofpu.contract.contract.Contract;
+import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 
 import java.util.UUID;
@@ -27,10 +28,18 @@ public class Confirmation {
         return receiver;
     }
 
+    public Contract peek(){
+        return ContractFactory.clone(contract);
+    }
+
     public Contract accept(){
         ConfirmationRegistry.getConfirmationManager().invalidate(this);
         contract.freeze(false);
         return contract;
+    }
+
+    public void invalidate(){
+        ConfirmationRegistry.getConfirmationManager().invalidate(this);
     }
 
     @Override

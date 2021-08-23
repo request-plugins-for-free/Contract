@@ -20,6 +20,10 @@ public class ContractFactory {
         return create(UUID.randomUUID(), employerName, employerId, contractorName, contractorId, ContractReviewFactory.create(), description, length, amount);
     }
 
+    public static Contract clone(final Contract contract) {
+        return create(contract.id(), contract.employerName(), contract.employerId(), contract.contractorName(), contract.contractorId(), contract.review(), contract.description(), contract.length(), contract.amount());
+    }
+
     //    public static Contract create(final UUID employerId, final String contractorName, final long length, final double amount, final String description){
     //        final Optional<UUID> contractorId = Util.getUniqueId(contractorName);
     //        if (!contractorId.isPresent()) return null;
