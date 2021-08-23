@@ -4,13 +4,17 @@ import me.tofpu.contract.ContractPlugin;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.service.UserService;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ContractRunnable extends BukkitRunnable {
     private static UserService userService;
-    public static void initialize(final UserService userService){
+    private static Economy economy;
+
+    public static void initialize(final UserService userService, final Economy economy){
         ContractRunnable.userService = userService;
+        ContractRunnable.economy = economy;
     }
     private final Contract contract;
 
@@ -36,7 +40,10 @@ public class ContractRunnable extends BukkitRunnable {
                     contractor.currentContract(null);
 
                     employer.ifPresent(player -> player.sendMessage("Completed!"));
-                    contractor.ifPresent(player -> player.sendMessage("Completed!"));
+                    contractor.ifPresent(player -> {
+                        player.sendMessage("Completed!");
+                        economy.depositPlayer(player, contract.amount());
+                    });
 
                     // TODO: SEND MESSAGE SAYING THE CONTRACT HAS COMPLETED
                     // TODO: SEND CONTRACT AMOUNT TO THE CONTRACTOR

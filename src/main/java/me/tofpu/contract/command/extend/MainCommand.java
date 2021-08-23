@@ -8,25 +8,25 @@ import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.contract.review.ContractReview;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
-import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.confirmation.Confirmation;
 import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
-import org.bukkit.Bukkit;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandAlias("contract")
 public class MainCommand extends ExtraBaseCommand {
-    private final UserService userService;
     private final ContractService contractService;
+    private final Economy economy;
 
-    public MainCommand(final UserService userService, final ContractService contractService) {
+    public MainCommand(final Economy economy, final ContractService contractService) {
         super("contract");
-        this.userService = userService;
+        this.economy = economy;
         this.contractService = contractService;
     }
 
@@ -64,21 +64,29 @@ public class MainCommand extends ExtraBaseCommand {
             employer.ifPresent(player -> player.sendMessage("You cannot send yourself a contract, silly!"));
             return;
         }
-        // TODO: CHECK IF THE EMPLOYER HAS ENOUGH MONEY
-
+        final AtomicBoolean enough = new AtomicBoolean(false);
+        employer.ifPresent(player -> {
+            enough.set(this.economy.getBalance(player) >= amount);
+        });
         // if employer has a current contract
         if (employer.currentContract().isPresent()) {
             // TODO: SAY YOU HAVE TO COMPLETE YOUR CURRENT CONTRACT FIRST
             return;
         }
+
+        // if employer doesn't have enough money
+        if (!enough.get()){
+            // TODO: SEND MESSAGE SAYING EMPLOYER DOESN'T HAVE ENOUGH MONEY
+            employer.ifPresent(player -> player.sendMessage("You do not have enough money!"));
+            return;
+        }
+
         final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length * 60, amount);
         Confirmation.send(employer.uniqueId(), contractor.uniqueId(), contract);
 
         // TODO: SEND MESSAGE TO EMPLOYER SAYING THE REQUEST HAS BEEN MADE
         employer.ifPresent(player -> player.sendMessage("You have sent a confirmation to " + contractor.name()));
         contractor.ifPresent(player -> player.sendMessage(employer.name() + " has sent you a contract, you can accept/deny the contract by typing /contractor accept/deny (employer)"));
-
-//        employer.ifPresent(player -> player.sendMessage("It's made!"));
     }
 
     @Subcommand("accept")
@@ -93,12 +101,17 @@ public class MainCommand extends ExtraBaseCommand {
             contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation..."));
             return;
         }
-//        if (isSame(employer, contractor)){
-//            // TODO: YOU CANNOT ACCEPT YOUR OWN CONTRACT, SILLY
-//            employer.ifPresent(player -> player.sendMessage("You cannot accept yourself a contract, silly!"));
-//            return;
-//        }
+        // if employer doesn't have enough amount
+        if (!hasEnough(employer, confirmation.peek().amount())){
+            confirmation.invalidate();
+            // TODO: SEND MESSAGE TO EMPLOYER SAYING YOUR CONTRACT HAS BEEN CANCELED DUE TO LACK OF FUNDS
+            employer.ifPresent(player -> player.sendMessage("Your contract has been cancelled due to lack of enough funds."));
+            // TODO: SEND MESSAGE TO CONTRACTOR SAYING THE CONTRACT HAS BEEN CANCELLED DUE TO LACK OF EMPLOYER'S FUNDS
+            contractor.ifPresent(player -> player.sendMessage("The contract has been cancelled due to lack of employer's funds."));
+            return;
+        }
         final Contract contract = confirmation.accept();
+        employer.ifPresent(player -> this.economy.withdrawPlayer(player, contract.amount()));
 
         employer.currentContract(contract);
         contractor.currentContract(contract);
@@ -183,7 +196,7 @@ public class MainCommand extends ExtraBaseCommand {
         if (showAll) {
             final List<Contract> contracts = contractService.of(player.getUniqueId());
             for (final Contract contract : contracts) {
-                if (builder.length() != 0) builder.append("\n");
+                if (builder.capacity() != 0) builder.append("\n");
                 builder.append(formatContract(contract));
             }
         } else {
@@ -200,6 +213,13 @@ public class MainCommand extends ExtraBaseCommand {
 
     private boolean isSame(final User one, final User two){
         return one.uniqueId().equals(two.uniqueId());
+    }
+
+    private boolean hasEnough(final User employer, final double amount){
+        final boolean[] enough = {false};
+        employer.ifPresent(player -> enough[0] = this.economy.getBalance(player) >= amount);
+
+        return enough[0];
     }
 
     private String formatContract(final Contract contract) {
