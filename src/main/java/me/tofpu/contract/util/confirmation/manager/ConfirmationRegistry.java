@@ -2,6 +2,8 @@ package me.tofpu.contract.util.confirmation.manager;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.requestpluginsforfree.ConfigAPI;
+import com.github.requestpluginsforfree.type.config.ConfigType;
 import me.tofpu.contract.util.confirmation.Confirmation;
 
 import java.util.Optional;
@@ -17,8 +19,10 @@ public class ConfirmationRegistry {
 
     public ConfirmationRegistry() {
         // TODO: HAVE THE EXPIRY THING CONFIGURABLE
+        final Integer expiry = ConfigAPI.get("settings.expire-on", ConfigType.INTEGER);
+
         this.confirmations = Caffeine.newBuilder()
-                .expireAfterWrite(1, TimeUnit.MINUTES)
+                .expireAfterWrite(expiry == null ? 1 : expiry, TimeUnit.MINUTES)
                 .build();
     }
 

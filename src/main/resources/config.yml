@@ -1,0 +1,3 @@
+settings:
+  # The expiry interval is based on minutes (default: 2 minutes)
+  expire-on: 2
