@@ -34,7 +34,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
 
         out.name("description").value(value.description());
         out.name("amount").value(value.amount());
-        out.name("started-at").value(value.startedAt());
         out.name("length").value(value.length());
 
         out.endObject();
@@ -57,7 +56,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
         String description = "";
         double amount = 0;
 
-        long startedAt = 0;
         long length = 0;
 
         while (in.hasNext()) {
@@ -83,12 +81,12 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                 case "review":
                     in.beginArray();
                     in.beginObject();
-                    int reviewRate = -1;
+                    double reviewRate = -1;
                     String reviewDescription = null;
                     while (in.hasNext()) {
                         switch (in.nextName()) {
                             case "rate":
-                                reviewRate = in.nextInt();
+                                reviewRate = in.nextDouble();
                                 break;
                             case "description":
                                 if (in.peek() != JsonToken.NULL) reviewDescription = in.nextString();
@@ -106,16 +104,13 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                 case "amount":
                     amount = in.nextDouble();
                     break;
-                case "started-at":
-                    startedAt = in.nextLong();
-                    break;
                 case "length":
-                    length = in.nextLong();
+                    length = in.nextInt();
                     break;
             }
         }
 
         in.endObject();
-        return ContractFactory.create(id, frozen, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, startedAt, length, amount);
+        return ContractFactory.create(id, frozen, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, length, amount);
     }
 }

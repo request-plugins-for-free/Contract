@@ -43,6 +43,20 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * @param name the user name
+     *
+     * @return the user instance, if it's available
+     */
+    @Override
+    public Optional<User> getUser(final String name) {
+        for (final User user : this.users) {
+            System.out.println(user.name() + " vs " + name);
+            if (user.name().equalsIgnoreCase(name)) return Optional.of(user);
+        }
+        return Optional.empty();
+    }
+
+    /**
      * @param uniqueId the user unique id
      *
      * @return the user instance or a brand new instance if it's not available

@@ -47,15 +47,21 @@ public class MainCommand extends ExtraBaseCommand {
     @Subcommand("create")
     @CommandAlias("create")
     @CommandCompletion("@players")
-    @Syntax("<player> <contract-time-in-minutes> <contract-amount> <description>")
+    @Syntax("<contractor> <length> <contract-amount> <description>")
     @CommandPermission("contract.create")
-    public void onCreate(final User employer, final User contractor, final long length, final double amount, final String description) {
+    public void onCreate(@Flags("self") final User employer, final User contractor, final long length, final double amount, final String description) {
         if (employer == null || contractor == null) return;
 
         // if player instance of contractor doesn't exist
         if (!contractor.isPresent()) {
             // TODO: TARGET HAS TO BE ONLINE
             contractor.ifPresent(player -> player.sendMessage("target is not online"));
+            return;
+        }
+
+        if (isSame(employer, contractor)){
+            // TODO: YOU CANNOT SEND YOURSELF A CONTRACT, SILLY
+            employer.ifPresent(player -> player.sendMessage("You cannot send yourself a contract, silly!"));
             return;
         }
         // TODO: CHECK IF THE EMPLOYER HAS ENOUGH MONEY
@@ -65,29 +71,33 @@ public class MainCommand extends ExtraBaseCommand {
             // TODO: SAY YOU HAVE TO COMPLETE YOUR CURRENT CONTRACT FIRST
             return;
         }
-        final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length, amount);
+        final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length * 60, amount);
         Confirmation.send(employer.uniqueId(), contractor.uniqueId(), contract);
 
         // TODO: SEND MESSAGE TO EMPLOYER SAYING THE REQUEST HAS BEEN MADE
         employer.ifPresent(player -> player.sendMessage("You have sent a confirmation to " + contractor.name()));
         contractor.ifPresent(player -> player.sendMessage(employer.name() + " has sent you a contract, you can accept/deny the contract by typing /contractor accept/deny (employer)"));
 
-        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN MADE!
-        employer.ifPresent(player -> player.sendMessage("It's made!"));
+//        employer.ifPresent(player -> player.sendMessage("It's made!"));
     }
 
     @Subcommand("accept")
     @CommandAlias("accept")
-    @CommandPermission("@players")
+    @CommandCompletion("@players")
     @Syntax("<employer>")
-    public void accept(final User contractor, final User employer, final Confirmation confirmation) {
+    public void accept(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
-        if (confirmation == null) {
+        if (confirmation == null || isSame(employer, contractor)) {
             // TODO: SEND MESSAGE SAYING YOU DO NOT HAVE A PENDING CONFIRMATION
             contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation..."));
             return;
         }
+//        if (isSame(employer, contractor)){
+//            // TODO: YOU CANNOT ACCEPT YOUR OWN CONTRACT, SILLY
+//            employer.ifPresent(player -> player.sendMessage("You cannot accept yourself a contract, silly!"));
+//            return;
+//        }
         final Contract contract = confirmation.accept();
 
         employer.currentContract(contract);
@@ -104,7 +114,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("deny")
     @CommandPermission("@players")
     @Syntax("<employer>")
-    public void deny(final User contractor, final User employer, final Confirmation confirmation) {
+    public void deny(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
         if (confirmation == null) {
@@ -141,22 +151,22 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
 
-        //        final double rating = Double.parseDouble(args[1]);
-        //        StringBuilder description = new StringBuilder();
-        //        for (int i = 2; i < args.length; i++){
-        //            description.append(args[i]);
-        //        }
+        // if contract employer does not equal to the so-called "employer" (issuer) unique id
+        if (!contract.employerId().equals(employer.getUniqueId())){
+            // TODO: SAY ONLY THE EMPLOYER COULD RATE THIS CONTRACT
+            return;
+        }
 
         // TODO: MESSAGE THE CONTRACTOR SAYING THE EMPLOYER HAS RATED YOU
         // TODO: MESSAGE THE EMPLOYER SAYING YOU'VE SUCCESSFULLY RATED THE EMPLOYER
 
-        contract.review().rate(rate);
+        contract.review().rate((double) Math.round(rate * 100) / 100);
         contract.review().description(description);
     }
 
     @Subcommand("history")
     @CommandAlias("history")
-    @CommandCompletion("contractsId")
+    @CommandCompletion("@contractsId")
     @Syntax("[contract-id]")
     public void onHistory(final Player player, @co.aikar.commands.annotation.Optional String id) {
         final boolean showAll = id == null || id.isEmpty();
@@ -173,7 +183,7 @@ public class MainCommand extends ExtraBaseCommand {
         if (showAll) {
             final List<Contract> contracts = contractService.of(player.getUniqueId());
             for (final Contract contract : contracts) {
-                if (builder.length() > 0) builder.append("\n");
+                if (builder.length() != 0) builder.append("\n");
                 builder.append(formatContract(contract));
             }
         } else {
@@ -186,6 +196,10 @@ public class MainCommand extends ExtraBaseCommand {
         }
 
         player.sendMessage(Util.colorize(builder.toString()));
+    }
+
+    private boolean isSame(final User one, final User two){
+        return one.uniqueId().equals(two.uniqueId());
     }
 
     private String formatContract(final Contract contract) {

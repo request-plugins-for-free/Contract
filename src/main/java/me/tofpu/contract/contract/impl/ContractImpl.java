@@ -19,7 +19,7 @@ public class ContractImpl implements Contract {
 
     private final ContractReview review;
 
-    private final long startedAt;
+    private long startedAt;
     private final double amount;
 
     private final String description;
@@ -28,9 +28,10 @@ public class ContractImpl implements Contract {
     private boolean frozen;
     private long length;
 
-    public ContractImpl(final UUID id, final boolean frozen, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long startedAt, final long length, final double amount) {
+    public ContractImpl(final UUID id, final boolean frozen, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long length, final double amount) {
         this.id = id;
-        freeze(frozen);
+        this.frozen = true;
+//        freeze(frozen);
 
         this.employerName = employerName;
         this.employerId = employerId;
@@ -41,11 +42,9 @@ public class ContractImpl implements Contract {
         this.review = review;
 
         this.description = description;
-        this.startedAt = startedAt;
         this.length = length;
         this.amount = amount;
 
-        // This is for ending the contract once it has reached it's supposedly length
         this.runnable = new ContractRunnable(this);
     }
 
@@ -109,11 +108,10 @@ public class ContractImpl implements Contract {
     /**
      * this will freeze/unfreeze the timer depending on the status parameter
      *
-     * @param stats the freeze status, false to have it ticking, true to freeze it
+     * @param status the freeze status, false to have it ticking, true to freeze it
      */
-    public void freeze(final boolean stats) {
-        this.frozen = stats;
-        if (frozen) {
+    public void freeze(final boolean status) {
+        if (status) {
             // QUESTION
             // if employer creates contract on 2:15 for 10 minutes
             // then leaves on 2:20 (spent 5 minutes in total, freezes)
@@ -124,9 +122,14 @@ public class ContractImpl implements Contract {
             // decrease the length by the amount they spent online
             // formula: LENGTH - AMOUNT SPENT ONLINE
             // you fucking genius!! brave!! CLAP CLAP!
-            this.length -= getDuration().toMinutes();
-            if (!this.runnable.isCancelled()) this.runnable.cancel();
+            System.out.println("From " + length + " to " + (length - getDuration().getSeconds()));
+            this.length -= getDuration().getSeconds();
+            this.runnable.cancel();
         } else {
+            // if it was frozen, set the startedAt to now
+            if (this.frozen){
+                this.startedAt = System.nanoTime();
+            }
             // trying to get te employer & contractor player instance
             final Player employer = Bukkit.getPlayer(employerId);
             final Player contractor = Bukkit.getPlayer(contractorId);
@@ -134,6 +137,7 @@ public class ContractImpl implements Contract {
             // if both the employer & contractor are online, ladies and gentlemen, let the timer tickin'!
             if (employer != null && contractor != null) this.runnable.start();
         }
+        this.frozen = status;
     }
 
     /**
@@ -190,7 +194,11 @@ public class ContractImpl implements Contract {
     @Override
     public boolean hasEnded() {
         final Duration duration = getDuration();
-        return duration.toMinutes() >= length();
+        final long seconds = duration.getSeconds();
+        System.out.println(employerName + " contract, seconds: " + seconds);
+        System.out.println("length: " + length());
+        System.out.println("statedAt: " + startedAt());
+        return seconds >= length();
     }
 
     @Override

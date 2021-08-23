@@ -29,6 +29,16 @@ public class Confirmation {
 
     public Contract accept(){
         ConfirmationRegistry.getConfirmationManager().invalidate(this);
+        contract.freeze(false);
         return contract;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Confirmation{");
+        sb.append("sender=").append(sender);
+        sb.append(", receiver=").append(receiver);
+        sb.append('}');
+        return sb.toString();
     }
 }

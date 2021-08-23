@@ -28,10 +28,6 @@ public final class ContractPlugin extends JavaPlugin {
     private void initializeFactories() {
         UserFactory.initialize(userService);
         ContractRunnable.initialize(userService);
-
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
-        getServer().getPluginManager().registerEvents(new PlayerQuitListener(dataManager), this);
-
     }
 
     private void initializeData() {
@@ -50,6 +46,7 @@ public final class ContractPlugin extends JavaPlugin {
         initializeCommand();
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(dataManager), this);
 
         dataManager.load();
     }

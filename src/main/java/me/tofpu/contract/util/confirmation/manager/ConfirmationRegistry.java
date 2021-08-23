@@ -27,8 +27,21 @@ public class ConfirmationRegistry {
         return confirmation;
     }
 
-    public Optional<Confirmation> get(final UUID sender){
-        return Optional.ofNullable(this.confirmations.getIfPresent(sender));
+    public Optional<Confirmation> get(final UUID uuid, boolean sender){
+        System.out.println(sender + " | " + uuid.toString());
+        if (sender)
+            return Optional.ofNullable(this.confirmations.getIfPresent(uuid));
+        return get(uuid);
+    }
+
+    private Optional<Confirmation> get(final UUID receiver){
+        for (final Confirmation confirmation : this.confirmations.asMap().values()){
+            if (confirmation.getReceiver().equals(receiver)){
+                System.out.println(confirmation.toString());
+                return Optional.of(confirmation);
+            }
+        }
+        return Optional.empty();
     }
 
     public void invalidate(final Confirmation confirmation){

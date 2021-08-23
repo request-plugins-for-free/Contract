@@ -1,6 +1,8 @@
 package me.tofpu.contract.command;
 
 import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.ConditionFailedException;
+import co.aikar.commands.InvalidCommandArgument;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.command.extend.MainCommand;
 import me.tofpu.contract.contract.Contract;
@@ -15,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CommandHandler {
     private final BukkitCommandManager commandManager;
@@ -44,28 +47,20 @@ public class CommandHandler {
         commandManager.getCommandCompletions().registerCompletion("contractsId", context -> contractsId(context.getPlayer(), false));
         commandManager.getCommandCompletions().registerCompletion("contractsEnded", context -> contractsId(context.getPlayer(), true));
 
-        commandManager.getCommandContexts().registerContext(User.class, context -> {
-            final Optional<User> user = userService.getUser(context.getPlayer().getUniqueId());
-            return user.orElseGet(() -> {
-                final String arg = context.getFirstArg();
-                if (arg == null) return null;
+        commandManager.getCommandContexts().registerIssuerAwareContext(User.class, context -> {
+            System.out.println(context.hasFlag("self") + " | " + context.getFirstArg());
+            if (context.hasFlag("self"))
+                return userService.getUser(context.getPlayer().getUniqueId()).orElse(null);
+            else {
+                final String arg = context.popFirstArg();
                 return userService.getUser(arg).orElse(null);
-            });
-        });
-
-        commandManager.getCommandContexts().registerContext(Confirmation.class, context -> {
-            User employer = null;
-            for (final Map.Entry<String, Object> string : context.getPassedArgs().entrySet()){
-                if (string.getKey().equals("employer")){
-                    employer = (User) string.getValue();
-                    break;
-                }
             }
-            if (employer == null) return null;
-            return ConfirmationRegistry.getConfirmationManager().get(employer.uniqueId()).orElse(null);
         });
 
-        // command registrations
+        commandManager.getCommandContexts().registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationManager().get(context.getPlayer().getUniqueId(), false).orElse(null));
+
+        // c
+        // ommand registrations
         commandManager.registerCommand(new MainCommand(userService, contractService));
     }
 }

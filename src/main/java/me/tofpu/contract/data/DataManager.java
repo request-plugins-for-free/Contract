@@ -58,6 +58,8 @@ public class DataManager {
         try (final FileReader reader = new FileReader(file)) {
             final User user = GSON.fromJson(reader, User.class);
             if (user == null) return Optional.of(getAndRegisterUser(player));
+
+            // "TRIES" to unfreeze the current contract since they joined back in
             user.currentContract().ifPresent(contract -> contract.freeze(false));
 
             return Optional.of(userService.registerUser(user));
@@ -81,9 +83,9 @@ public class DataManager {
             final Optional<User> user = userService.getUser(player.getUniqueId());
             if (!user.isPresent()) return;
             user.get().currentContract().ifPresent(contract -> contract.freeze(true));
-            userService.removeUser(player.getUniqueId());
 
             writer.write(GSON.toJson(user.get(), User.class));
+            userService.removeUser(player.getUniqueId());
         } catch (IOException e) {
             e.printStackTrace();
         }
