@@ -1,10 +1,12 @@
 package me.tofpu.contract.data;
 
+import com.github.requestpluginsforfree.fileutil.file.PluginFile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.adapter.ContractAdapter;
 import me.tofpu.contract.contract.service.ContractService;
+import me.tofpu.contract.data.file.MessageFile;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.adapter.UserAdapter;
 import me.tofpu.contract.user.factory.UserFactory;
@@ -25,19 +27,26 @@ public class DataManager {
     private final ContractService contractService;
 
     private final File[] files;
+    private final PluginFile[] pluginFiles;
 
     public DataManager(final UserService userService, final ContractService contractService) {
         this.userService = userService;
         this.contractService = contractService;
         this.files = new File[2];
+        this.pluginFiles = new PluginFile[1];
     }
 
     public void initialize(final File directory) {
         this.files[0] = new File(directory, "users");
         this.files[1] = new File(directory, "contracts");
 
+        this.pluginFiles[0] = new MessageFile(directory);
         for (final File file : files) {
             if (!file.exists()) file.mkdirs();
+        }
+
+        for (final PluginFile file : pluginFiles){
+            file.initialize(false);
         }
     }
 

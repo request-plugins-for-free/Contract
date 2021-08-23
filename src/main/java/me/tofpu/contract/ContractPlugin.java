@@ -10,7 +10,7 @@ import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.data.listener.PlayerQuitListener;
 import me.tofpu.contract.user.factory.UserFactory;
-import me.tofpu.contract.user.listener.PlayerJoinListener;
+import me.tofpu.contract.data.listener.PlayerJoinListener;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.user.service.impl.UserServiceImpl;
 import net.milkbowl.vault.economy.Economy;

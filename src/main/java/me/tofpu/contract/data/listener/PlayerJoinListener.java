@@ -1,4 +1,4 @@
-package me.tofpu.contract.user.listener;
+package me.tofpu.contract.data.listener;
 
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.user.User;
