@@ -1,6 +1,7 @@
 package me.tofpu.contract;
 
 import com.github.requestpluginsforfree.ConfigAPI;
+import com.github.requestpluginsforfree.dependency.registry.DependencyAPI;
 import me.tofpu.contract.command.CommandHandler;
 import me.tofpu.contract.contract.runnable.ContractRunnable;
 import me.tofpu.contract.contract.service.ContractService;
@@ -30,6 +31,7 @@ public final class ContractPlugin extends JavaPlugin {
         UserFactory.initialize(userService);
         ContractRunnable.initialize(userService);
         ConfigAPI.initialize(getConfig());
+        DependencyAPI.initialize(this);
     }
 
     private void initializeData() {
@@ -48,8 +50,6 @@ public final class ContractPlugin extends JavaPlugin {
         initializeFactories();
         initializeData();
         initializeCommand();
-
-//        ConfigAPI.example();
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(dataManager), this);
