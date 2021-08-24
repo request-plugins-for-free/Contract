@@ -19,7 +19,7 @@ public class ConfirmationRegistry {
 
     public ConfirmationRegistry() {
         // TODO: HAVE THE EXPIRY THING CONFIGURABLE
-        final Integer expiry = ConfigAPI.get("settings.expire-on", ConfigType.INTEGER);
+        final Integer expiry = ConfigAPI.get("config","settings.expire-on", ConfigType.INTEGER);
 
         this.confirmations = Caffeine.newBuilder()
                 .expireAfterWrite(expiry == null ? 1 : expiry, TimeUnit.MINUTES)

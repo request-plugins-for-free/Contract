@@ -1,8 +1,6 @@
 package me.tofpu.contract.command;
 
 import co.aikar.commands.BukkitCommandManager;
-import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.InvalidCommandArgument;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.command.extend.MainCommand;
 import me.tofpu.contract.contract.Contract;
@@ -11,22 +9,22 @@ import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.confirmation.Confirmation;
 import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class CommandHandler {
     private final BukkitCommandManager commandManager;
 
+    private final Economy economy;
     private final UserService userService;
     private final ContractService contractService;
 
-    public CommandHandler(final Plugin plugin, final UserService userService, final ContractService contractService) {
+    public CommandHandler(final Plugin plugin, final Economy economy, final UserService userService, final ContractService contractService) {
         this.commandManager = new BukkitCommandManager(plugin);
+        this.economy = economy;
         this.userService = userService;
         this.contractService = contractService;
     }
@@ -61,6 +59,6 @@ public class CommandHandler {
 
         // c
         // ommand registrations
-        commandManager.registerCommand(new MainCommand(userService, contractService));
+        commandManager.registerCommand(new MainCommand(userService, economy, contractService));
     }
 }

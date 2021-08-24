@@ -2,8 +2,10 @@ package me.tofpu.contract.contract.runnable;
 
 import me.tofpu.contract.ContractPlugin;
 import me.tofpu.contract.contract.Contract;
+import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.service.UserService;
+import me.tofpu.contract.util.Util;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,15 +41,11 @@ public class ContractRunnable extends BukkitRunnable {
                     employer.currentContract(null);
                     contractor.currentContract(null);
 
-                    employer.ifPresent(player -> player.sendMessage("Completed!"));
+                    Util.message(employer, Path.STANDARD_CONTRACT_COMPLETED_FROM, new String[]{"%id%"}, contract.id().toString());
                     contractor.ifPresent(player -> {
-                        player.sendMessage("Completed!");
+                        Util.message(player, Path.STANDARD_CONTRACT_COMPLETED_TO, new String[]{"%amount%"}, contract.amount() + "");
                         economy.depositPlayer(player, contract.amount());
                     });
-
-                    // TODO: SEND MESSAGE SAYING THE CONTRACT HAS COMPLETED
-                    // TODO: SEND CONTRACT AMOUNT TO THE CONTRACTOR
-                    // TODO: HAVE THE EMPLOYER RATE THE CONTRACTOR? THROUGH A COMMAND MAYBE?
                 }
             });
         }

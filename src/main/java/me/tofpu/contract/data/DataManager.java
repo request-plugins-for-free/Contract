@@ -13,6 +13,7 @@ import me.tofpu.contract.user.factory.UserFactory;
 import me.tofpu.contract.user.service.UserService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileReader;
@@ -36,11 +37,11 @@ public class DataManager {
         this.pluginFiles = new PluginFile[1];
     }
 
-    public void initialize(final File directory) {
+    public void initialize(final Plugin plugin, final File directory) {
         this.files[0] = new File(directory, "users");
         this.files[1] = new File(directory, "contracts");
 
-        this.pluginFiles[0] = new MessageFile(directory);
+        this.pluginFiles[0] = new MessageFile(plugin, directory);
         for (final File file : files) {
             if (!file.exists()) file.mkdirs();
         }
@@ -106,5 +107,9 @@ public class DataManager {
 
     public UserService getUserService() {
         return userService;
+    }
+
+    public PluginFile[] getPluginFiles() {
+        return pluginFiles;
     }
 }

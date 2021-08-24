@@ -1,0 +1,36 @@
+standard:
+  contract:
+    sent-to: "&eYou have sent a contract request to %name%!"
+    sent-from: "&e%name% has sent you a contract request!\n&eYou can accept/deny by typing either /accept %name% or /deny %name%"
+    completed-to: "&eThe contract has ended!\n&eYou have received &6%amount% &ebalance!"
+    completed-from: "&eThe contract has ended!\n&eYou can rate the contract's work by typing &6/rate %id% 5 Excellent Work!"
+
+  request:
+    accepted-to: "&eYou have accepted the contract from %name%!\n&eThe contract has started!"
+    accepted-from: "&e%name% has accepted your contract!"
+    denied-to: "&eYou have denied %name% contract!"
+    denied-from: "&e%name% has denied your contract!"
+
+  rate:
+    rated-to: "&eYou have successfully rated the contract's work from %name%!"
+    rated-from: "&e%name% has rated your contract's work!\n&eYou can view it at /history %id%"
+
+error:
+  general:
+    target-offline: "&c%name% is not online!"
+
+  contract:
+    self: "&cYou cannot send yourself a contract!"
+    busy: "&cYou cannot create a contract while you're in one!"
+    not-enough-funds: "&cYou do not have enough funds for this contract!"
+
+  request:
+    no-pending: "&cYou do not have a contract pending!"
+    lacking-funds-to: "&cThe contract is no longer available due to lacking funds from %name%!"
+    lacking-funds-from: "&cYour contract to %name% is no longer available due to lacking funds from you!"
+
+  rate:
+    invalid-contract: "&cThis contract doesn't exist!"
+    invalid-rate: "&cInvalid rate, you can only rate from 0 to 5!"
+    active-contract: "&cYou cannot rate a contract that is sill active!"
+    only-employer: "&cOnly the employer of the contract can rate this contract."

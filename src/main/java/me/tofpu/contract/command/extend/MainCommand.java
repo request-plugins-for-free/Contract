@@ -1,6 +1,8 @@
 package me.tofpu.contract.command.extend;
 
 import co.aikar.commands.annotation.*;
+import me.tofpu.contract.data.path.Path;
+import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.Util;
 import me.tofpu.contract.command.base.ExtraBaseCommand;
 import me.tofpu.contract.contract.Contract;
@@ -21,11 +23,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandAlias("contract")
 public class MainCommand extends ExtraBaseCommand {
+    private final UserService userService;
     private final ContractService contractService;
     private final Economy economy;
 
-    public MainCommand(final Economy economy, final ContractService contractService) {
+    public MainCommand(final UserService userService, final Economy economy, final ContractService contractService) {
         super("contract");
+        this.userService = userService;
         this.economy = economy;
         this.contractService = contractService;
     }
@@ -54,39 +58,43 @@ public class MainCommand extends ExtraBaseCommand {
 
         // if player instance of contractor doesn't exist
         if (!contractor.isPresent()) {
-            // TODO: TARGET HAS TO BE ONLINE
-            contractor.ifPresent(player -> player.sendMessage("target is not online"));
+//            contractor.ifPresent(player -> player.sendMessage("target is not online"));
+            Util.message(employer, Path.ERROR_TARGET_OFFLINE, new String[]{"%name%"}, contractor.name());
             return;
         }
 
         if (isSame(employer, contractor)){
-            // TODO: YOU CANNOT SEND YOURSELF A CONTRACT, SILLY
-            employer.ifPresent(player -> player.sendMessage("You cannot send yourself a contract, silly!"));
-            return;
-        }
-        final AtomicBoolean enough = new AtomicBoolean(false);
-        employer.ifPresent(player -> {
-            enough.set(this.economy.getBalance(player) >= amount);
-        });
-        // if employer has a current contract
-        if (employer.currentContract().isPresent()) {
-            // TODO: SAY YOU HAVE TO COMPLETE YOUR CURRENT CONTRACT FIRST
+//            employer.ifPresent(player -> player.sendMessage("You cannot send yourself a contract, silly!"));
+            Util.message(employer, Path.ERROR_CONTRACT_SELF);
             return;
         }
 
+        // if employer has a current contract
+        if (employer.currentContract().isPresent()) {
+            Util.message(employer, Path.ERROR_CONTRACT_BUSY);
+            return;
+        }
+
+        final AtomicBoolean enough = new AtomicBoolean(false);
+        employer.ifPresent(player ->
+                enough.set(this.economy.getBalance(player) >= amount)
+        );
+
         // if employer doesn't have enough money
         if (!enough.get()){
-            // TODO: SEND MESSAGE SAYING EMPLOYER DOESN'T HAVE ENOUGH MONEY
-            employer.ifPresent(player -> player.sendMessage("You do not have enough money!"));
+//            employer.ifPresent(player -> player.sendMessage("You do not have enough money!"));
+            Util.message(employer, Path.ERROR_CONTRACT_NOT_ENOUGH_FUNDS);
             return;
         }
 
         final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length * 60, amount);
         Confirmation.send(employer.uniqueId(), contractor.uniqueId(), contract);
 
-        // TODO: SEND MESSAGE TO EMPLOYER SAYING THE REQUEST HAS BEEN MADE
-        employer.ifPresent(player -> player.sendMessage("You have sent a confirmation to " + contractor.name()));
-        contractor.ifPresent(player -> player.sendMessage(employer.name() + " has sent you a contract, you can accept/deny the contract by typing /contractor accept/deny (employer)"));
+//        employer.ifPresent(player -> player.sendMessage("You have sent a confirmation to " + contractor.name()));
+//        contractor.ifPresent(player -> player.sendMessage(employer.name() + " has sent you a contract, you can accept/deny the contract by typing /contractor accept/deny (employer)"));
+
+        Util.message(employer, Path.STANDARD_CONTRACT_SENT_TO, new String[]{"%name%"}, contractor.name());
+        Util.message(contractor, Path.STANDARD_CONTRACT_SENT_FROM, new String[]{"%name%"}, employer.name());
     }
 
     @Subcommand("accept")
@@ -97,17 +105,18 @@ public class MainCommand extends ExtraBaseCommand {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
         if (confirmation == null || isSame(employer, contractor)) {
-            // TODO: SEND MESSAGE SAYING YOU DO NOT HAVE A PENDING CONFIRMATION
-            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation..."));
+//            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation..."));
+            Util.message(contractor, Path.ERROR_REQUEST_NO_PENDING);
             return;
         }
         // if employer doesn't have enough amount
         if (!hasEnough(employer, confirmation.peek().amount())){
             confirmation.invalidate();
-            // TODO: SEND MESSAGE TO EMPLOYER SAYING YOUR CONTRACT HAS BEEN CANCELED DUE TO LACK OF FUNDS
-            employer.ifPresent(player -> player.sendMessage("Your contract has been cancelled due to lack of enough funds."));
-            // TODO: SEND MESSAGE TO CONTRACTOR SAYING THE CONTRACT HAS BEEN CANCELLED DUE TO LACK OF EMPLOYER'S FUNDS
-            contractor.ifPresent(player -> player.sendMessage("The contract has been cancelled due to lack of employer's funds."));
+//            employer.ifPresent(player -> player.sendMessage("Your contract has been cancelled due to lack of enough funds."));
+//            contractor.ifPresent(player -> player.sendMessage("The contract has been cancelled due to lack of employer's funds."));
+
+            Util.message(employer, Path.ERROR_REQUEST_LACKING_FUNDS_FROM, new String[]{"%name%"}, contractor.name());
+            Util.message(contractor, Path.ERROR_REQUEST_LACKING_FUNDS_TO, new String[]{"%name%"}, employer.name());
             return;
         }
         final Contract contract = confirmation.accept();
@@ -118,9 +127,11 @@ public class MainCommand extends ExtraBaseCommand {
 
         contractService.registerContract(contract);
 
-        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN ACCEPTED
-        contractor.ifPresent(player -> player.sendMessage("You have accepted " + employer.name() + " contract request!"));
-        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has accepted your contract request!"));
+//        contractor.ifPresent(player -> player.sendMessage("You have accepted " + employer.name() + " contract request!"));
+        Util.message(contractor, Path.STANDARD_REQUEST_ACCEPTED_TO, new String[]{"%name%"}, employer.name());
+
+//        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has accepted your contract request!"));
+        Util.message(employer, Path.STANDARD_REQUEST_ACCEPTED_FROM, new String[]{"%name%"}, contractor.name());
     }
 
     @Subcommand("deny")
@@ -131,14 +142,17 @@ public class MainCommand extends ExtraBaseCommand {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
         if (confirmation == null) {
-            // TODO: SEND MESSAGE SAYING YOU DO NOT HAVE A PENDING CONFIRMATION
-            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation from " + player.getName()));
+//            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation from " + player.getName()));
+            Util.message(contractor, Path.ERROR_REQUEST_NO_PENDING);
             return;
         }
         ConfirmationRegistry.getConfirmationManager().invalidate(confirmation);
-        // TODO: SEND MESSAGE SAYING THE CONTRACT HAS BEEN DENIED
-        contractor.ifPresent(player -> player.sendMessage("You have denied " + employer.name() + " contract request!"));
-        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has denied your contract request!"));
+
+        // contractor.ifPresent(player -> player.sendMessage("You have denied " + employer.name() + " contract request!"));
+        Util.message(contractor, Path.STANDARD_REQUEST_DENIED_TO, new String[]{"%name%"}, employer.name());
+
+//        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has denied your contract request!"));
+        Util.message(employer, Path.STANDARD_REQUEST_DENIED_FROM, new String[]{"%name%"}, contractor.name());
     }
 
     @Subcommand("rate")
@@ -149,24 +163,24 @@ public class MainCommand extends ExtraBaseCommand {
         final UUID contractId = UUID.fromString(id);
         final Optional<Contract> optional = contractService.getContractById(contractId);
         if (!optional.isPresent()) {
-            // TODO: SAY THE CONTRACT DOESN'T EXIST
+            Util.message(employer, Path.ERROR_RATE_INVALID_CONTRACT);
             return;
         }
 
         if (rate < 0 || rate > 5) {
-            // TODO: SAY THE RATE CANNOT BE LOWER THAN 0 OR HIGHER THAN 5
+            Util.message(employer, Path.ERROR_RATE_INVALID_RATE);
             return;
         }
 
         final Contract contract = optional.get();
         if (!contract.hasEnded()) {
-            // TODO: SAY THE CONTRACT HASN'T ENDED YET
+            Util.message(employer, Path.ERROR_RATE_ACTIVE_CONTRACT);
             return;
         }
 
         // if contract employer does not equal to the so-called "employer" (issuer) unique id
         if (!contract.employerId().equals(employer.getUniqueId())){
-            // TODO: SAY ONLY THE EMPLOYER COULD RATE THIS CONTRACT
+            Util.message(employer, Path.ERROR_RATE_ONLY_EMPLOYER);
             return;
         }
 
@@ -175,6 +189,11 @@ public class MainCommand extends ExtraBaseCommand {
 
         contract.review().rate((double) Math.round(rate * 100) / 100);
         contract.review().description(description);
+
+        final User contractor = userService.getUser(contract.contractorId()).get();
+
+        Util.message(employer, Path.STANDARD_RATE_RATED_TO, new String[]{"%name%"}, contractor.name());
+        Util.message(contractor, Path.STANDARD_RATE_RATED_FROM, new String[]{"%name%", "%id%"}, employer.getDisplayName(), contractId.toString());
     }
 
     @Subcommand("history")
@@ -196,7 +215,7 @@ public class MainCommand extends ExtraBaseCommand {
         if (showAll) {
             final List<Contract> contracts = contractService.of(player.getUniqueId());
             for (final Contract contract : contracts) {
-                if (builder.capacity() != 0) builder.append("\n");
+                if (builder.capacity() != 1) builder.append("\n");
                 builder.append(formatContract(contract));
             }
         } else {

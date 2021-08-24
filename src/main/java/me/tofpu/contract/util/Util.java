@@ -2,6 +2,8 @@ package me.tofpu.contract.util;
 
 import co.aikar.commands.RegisteredCommand;
 import com.google.common.collect.Maps;
+import me.tofpu.contract.data.path.Path;
+import me.tofpu.contract.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,6 +20,22 @@ public class Util {
 
     public static String colorize(final String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public static void message(final User user, final Path.Value<?> value){
+        user.ifPresent(player -> message(player, value));
+    }
+
+    public static void message(final User user, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith){
+        user.ifPresent(player -> message(player, value, replaceArray, replaceWith));
+    }
+
+    public static void message(final Player player, final Path.Value<?> value){
+        player.sendMessage(colorize(value.getValue() + ""));
+    }
+
+    public static void message(final Player player, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith){
+        player.sendMessage(colorize(WordReplacer.replace(value.getValue() + "", replaceArray, replaceWith)));
     }
 
     public static String format(final RegisteredCommand<?> command) {
