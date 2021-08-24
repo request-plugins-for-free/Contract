@@ -3,6 +3,7 @@ package me.tofpu.contract;
 import com.github.requestpluginsforfree.ConfigAPI;
 import com.github.requestpluginsforfree.dependency.Dependency;
 import com.github.requestpluginsforfree.dependency.api.DependencyAPI;
+import com.github.requestpluginsforfree.dependency.impl.VaultDependency;
 import com.github.requestpluginsforfree.type.config.ConfigType;
 import com.github.requestpluginsforfree.type.identifier.ConfigIdentifier;
 import me.tofpu.contract.command.CommandHandler;
@@ -52,7 +53,9 @@ public final class ContractPlugin extends JavaPlugin {
     }
 
     private void initializeDependency() {
+        DependencyAPI.register(new VaultDependency());
         DependencyAPI.initialize(this);
+
         final Dependency<?> vault = DependencyAPI.get("vault");
         if (vault != null && vault.isAvailable()){
             this.economy = (Economy) vault.get();
