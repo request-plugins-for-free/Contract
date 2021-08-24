@@ -32,6 +32,7 @@ public class Path {
     private static final String ERROR_RATE = ERROR + "rate.";
 
     public static final Value<String> ERROR_TARGET_OFFLINE = new Value<>(ERROR_GENERAL + "target-offline", ConfigType.STRING, PathType.MESSAGES);
+    public static final Value<String> ERROR_GENERAL_INVALID_CONTRACT = new Value<>(ERROR_GENERAL + "invalid-contract", ConfigType.STRING, PathType.MESSAGES);
 
     public static final Value<String> ERROR_CONTRACT_SELF = new Value<>(ERROR_CONTRACT + "self", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_CONTRACT_BUSY = new Value<>(ERROR_CONTRACT + "busy", ConfigType.STRING, PathType.MESSAGES);
@@ -41,7 +42,6 @@ public class Path {
     public static final Value<String> ERROR_REQUEST_LACKING_FUNDS_TO = new Value<>(ERROR_REQUEST + "lacking-funds-to", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_REQUEST_LACKING_FUNDS_FROM = new Value<>(ERROR_REQUEST + "lacking-funds-from", ConfigType.STRING, PathType.MESSAGES);
 
-    public static final Value<String> ERROR_RATE_INVALID_CONTRACT = new Value<>(ERROR_RATE + "invalid-contract", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_RATE_INVALID_RATE = new Value<>(ERROR_RATE + "invalid-rate", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_RATE_ACTIVE_CONTRACT = new Value<>(ERROR_RATE + "active-contract", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_RATE_ONLY_EMPLOYER = new Value<>(ERROR_RATE + "only-employer", ConfigType.STRING, PathType.MESSAGES);

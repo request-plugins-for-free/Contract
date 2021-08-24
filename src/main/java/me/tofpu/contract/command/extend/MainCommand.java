@@ -163,7 +163,7 @@ public class MainCommand extends ExtraBaseCommand {
         final UUID contractId = UUID.fromString(id);
         final Optional<Contract> optional = contractService.getContractById(contractId);
         if (!optional.isPresent()) {
-            Util.message(employer, Path.ERROR_RATE_INVALID_CONTRACT);
+            Util.message(employer, Path.ERROR_GENERAL_INVALID_CONTRACT);
             return;
         }
 
@@ -221,10 +221,10 @@ public class MainCommand extends ExtraBaseCommand {
         } else {
             final Optional<Contract> optional = contractService.getContractById(UUID.fromString(id));
             if (!optional.isPresent()) {
-                // TODO: SEND MESSAGE SAYING THAT CONTRACT DOESN'T EXIST
+                Util.message(player, Path.ERROR_GENERAL_INVALID_CONTRACT);
                 return;
             }
-            builder.append(optional.get());
+            builder.append(formatContract(optional.get()));
         }
 
         player.sendMessage(Util.colorize(builder.toString()));
