@@ -1,11 +1,14 @@
 package me.tofpu.contract.util;
 
 import co.aikar.commands.RegisteredCommand;
+import com.github.requestpluginsforfree.dependency.api.DependencyAPI;
 import com.google.common.collect.Maps;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -30,12 +33,17 @@ public class Util {
         user.ifPresent(player -> message(player, value, replaceArray, replaceWith));
     }
 
-    public static void message(final Player player, final Path.Value<?> value){
-        player.sendMessage(colorize(value.getValue() + ""));
+    public static void message(final CommandSender sender, final Path.Value<?> value){
+        message(sender, value.getValue() + "");
     }
 
-    public static void message(final Player player, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith){
-        player.sendMessage(colorize(WordReplacer.replace(value.getValue() + "", replaceArray, replaceWith)));
+    public static void message(final CommandSender sender, String message){
+        if (DependencyAPI.get("dependency").isAvailable() && sender instanceof Player) message = PlaceholderAPI.setBracketPlaceholders(((Player) sender).getPlayer(), message);
+        sender.sendMessage(colorize(message));
+    }
+
+    public static void message(final CommandSender sender, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith){
+        message(sender, colorize(WordReplacer.replace(value.getValue() + "", replaceArray, replaceWith)));
     }
 
     public static String format(final RegisteredCommand<?> command) {
