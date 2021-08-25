@@ -3,6 +3,7 @@ package me.tofpu.contract;
 import com.github.requestpluginsforfree.ConfigAPI;
 import com.github.requestpluginsforfree.dependency.Dependency;
 import com.github.requestpluginsforfree.dependency.api.DependencyAPI;
+import com.github.requestpluginsforfree.dependency.impl.PlaceholderDependency;
 import com.github.requestpluginsforfree.dependency.impl.VaultDependency;
 import com.github.requestpluginsforfree.type.config.ConfigType;
 import com.github.requestpluginsforfree.type.identifier.ConfigIdentifier;
@@ -12,12 +13,19 @@ import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.data.listener.PlayerQuitListener;
+import me.tofpu.contract.listener.AsyncPlayerChat;
+import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.factory.UserFactory;
 import me.tofpu.contract.data.listener.PlayerJoinListener;
+import me.tofpu.contract.user.impl.UserImpl;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.user.service.impl.UserServiceImpl;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Optional;
 
 public final class ContractPlugin extends JavaPlugin {
     private final UserService userService;
@@ -42,6 +50,7 @@ public final class ContractPlugin extends JavaPlugin {
 
         UserFactory.initialize(userService);
         ContractRunnable.initialize(userService, economy);
+        UserImpl.setUserService(contractService);
     }
 
     private void initializeData() {
@@ -62,15 +71,20 @@ public final class ContractPlugin extends JavaPlugin {
         }
     }
 
+    private void initializeListeners(){
+        final PluginManager manager = getServer().getPluginManager();
+        manager.registerEvents(new PlayerJoinListener(dataManager), this);
+        manager.registerEvents(new PlayerQuitListener(dataManager), this);
+        manager.registerEvents(new AsyncPlayerChat(userService), this);
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         saveDefaultConfig();
 
         initializes();
-
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
-        getServer().getPluginManager().registerEvents(new PlayerQuitListener(dataManager), this);
+        initializeListeners();
 
         dataManager.load();
     }

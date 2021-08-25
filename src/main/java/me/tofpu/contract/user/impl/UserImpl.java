@@ -1,16 +1,24 @@
 package me.tofpu.contract.user.impl;
 
 import me.tofpu.contract.contract.Contract;
+import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
+import me.tofpu.contract.user.service.UserService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class UserImpl implements User {
+    private static ContractService contractService;
+    public static void setUserService(final ContractService contractService) {
+        UserImpl.contractService = contractService;
+    }
+
     private final UUID uniqueId;
     private String name;
     private Contract currentContract;
@@ -97,8 +105,12 @@ public class UserImpl implements User {
      */
     @Override
     public double averageRating() {
-        // TODO: GOOGLE HOW TO GET AVERAGE NUMBER, ETC
-        return 0;
+        double average = 0;
+        final List<Contract> contracts = contractService.of(uniqueId());
+        for (final Contract contract : contracts){
+            average+= contract.review().rate();
+        }
+        return average / contracts.size();
     }
 
     @Override
