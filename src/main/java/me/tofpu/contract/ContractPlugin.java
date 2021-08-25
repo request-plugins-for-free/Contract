@@ -13,6 +13,7 @@ import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
 import me.tofpu.contract.data.DataManager;
 import me.tofpu.contract.data.listener.PlayerQuitListener;
+import me.tofpu.contract.expansion.ContractExpansion;
 import me.tofpu.contract.listener.AsyncPlayerChat;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.factory.UserFactory;
@@ -63,7 +64,10 @@ public final class ContractPlugin extends JavaPlugin {
 
     private void initializeDependency() {
         DependencyAPI.register(new VaultDependency());
+        DependencyAPI.register(new PlaceholderDependency());
+
         DependencyAPI.initialize(this);
+        new ContractExpansion(getDescription(), userService);
 
         final Dependency<?> vault = DependencyAPI.get("vault");
         if (vault != null && vault.isAvailable()){
