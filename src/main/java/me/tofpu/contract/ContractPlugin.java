@@ -87,6 +87,13 @@ public final class ContractPlugin extends JavaPlugin {
         initializeListeners();
 
         dataManager.load();
+
+        // reload patch
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            final Optional<User> user = this.dataManager.loadUser(player);
+
+            user.ifPresent(value -> value.name(player.getName()));
+        });
     }
 
     @Override
