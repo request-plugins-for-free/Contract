@@ -55,7 +55,7 @@ public class CommandHandler {
             }
         });
 
-        commandManager.getCommandContexts().registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationManager().get(context.getPlayer().getUniqueId(), false).orElse(null));
+        commandManager.getCommandContexts().registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationRegistry().get(context.getPlayer().getUniqueId(), false).orElse(null));
 
         // c
         // ommand registrations

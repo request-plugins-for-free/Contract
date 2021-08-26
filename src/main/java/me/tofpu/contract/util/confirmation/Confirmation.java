@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class Confirmation {
     public static Confirmation send(final UUID sender, final UUID target, final Contract contract){
-        return ConfirmationRegistry.getConfirmationManager().register(new Confirmation(sender, target, contract));
+        return ConfirmationRegistry.getConfirmationRegistry().register(new Confirmation(sender, target, contract));
     }
     private final UUID sender;
     private final UUID receiver;
@@ -33,13 +33,13 @@ public class Confirmation {
     }
 
     public Contract accept(){
-        ConfirmationRegistry.getConfirmationManager().invalidate(this);
+        ConfirmationRegistry.getConfirmationRegistry().invalidate(this);
         contract.freeze(false);
         return contract;
     }
 
     public void invalidate(){
-        ConfirmationRegistry.getConfirmationManager().invalidate(this);
+        ConfirmationRegistry.getConfirmationRegistry().invalidate(this);
     }
 
     @Override

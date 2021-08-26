@@ -146,7 +146,7 @@ public class MainCommand extends ExtraBaseCommand {
             Util.message(contractor, Path.ERROR_REQUEST_NO_PENDING);
             return;
         }
-        ConfirmationRegistry.getConfirmationManager().invalidate(confirmation);
+        ConfirmationRegistry.getConfirmationRegistry().invalidate(confirmation);
 
         // contractor.ifPresent(player -> player.sendMessage("You have denied " + employer.name() + " contract request!"));
         Util.message(contractor, Path.STANDARD_REQUEST_DENIED_TO, new String[]{"%name%"}, employer.name());

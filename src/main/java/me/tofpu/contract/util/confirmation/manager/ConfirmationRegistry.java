@@ -13,10 +13,14 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class ConfirmationRegistry {
-    private static final ConfirmationRegistry CONFIRMATION_MANAGER = new ConfirmationRegistry();
-    public static ConfirmationRegistry getConfirmationManager() {
-        return CONFIRMATION_MANAGER;
+    private static ConfirmationRegistry confirmationRegistry;
+    public static ConfirmationRegistry getConfirmationRegistry() {
+        return confirmationRegistry;
     }
+    public static void initialize(final UserService userService){
+        ConfirmationRegistry.confirmationRegistry = new ConfirmationRegistry(userService);
+    }
+
     private final Cache<UUID, Confirmation> confirmations;
 
     public ConfirmationRegistry(final UserService userService) {

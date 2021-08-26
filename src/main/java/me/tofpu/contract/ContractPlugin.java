@@ -20,6 +20,7 @@ import me.tofpu.contract.data.listener.PlayerJoinListener;
 import me.tofpu.contract.user.impl.UserImpl;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.user.service.impl.UserServiceImpl;
+import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -50,7 +51,8 @@ public final class ContractPlugin extends JavaPlugin {
 
         UserFactory.initialize(userService);
         ContractRunnable.initialize(userService, economy);
-        UserImpl.setUserService(contractService);
+        UserImpl.initialize(contractService);
+        ConfirmationRegistry.initialize(userService);
     }
 
     private void initializeData() {

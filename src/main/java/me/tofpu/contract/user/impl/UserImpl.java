@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public class UserImpl implements User {
     private static ContractService contractService;
-    public static void setUserService(final ContractService contractService) {
+    public static void initialize(final ContractService contractService) {
         UserImpl.contractService = contractService;
     }
 

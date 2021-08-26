@@ -24,5 +24,4 @@ public class RemovalListener implements com.github.benmanes.caffeine.cache.Remov
         // TODO: HAVE THIS EXPIRY MESSAGE CONFIGURABLE
         optional.ifPresent(user -> user.ifPresent(player -> player.sendMessage("Your contract has expired.")));
     }
-    }
 }
