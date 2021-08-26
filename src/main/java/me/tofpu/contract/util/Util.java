@@ -38,7 +38,7 @@ public class Util {
     }
 
     public static void message(final CommandSender sender, String message){
-        if (DependencyAPI.get("dependency").isAvailable() && sender instanceof Player) message = PlaceholderAPI.setBracketPlaceholders(((Player) sender).getPlayer(), message);
+        if (DependencyAPI.get("PlaceholderAPI").isAvailable() && sender instanceof Player) message = PlaceholderAPI.setBracketPlaceholders(((Player) sender).getPlayer(), message);
         sender.sendMessage(colorize(message));
     }
 

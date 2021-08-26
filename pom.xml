@@ -130,13 +130,6 @@
 
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
-            <artifactId>Config</artifactId>
-            <version>ab39e4bc37</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.request-plugins-for-free</groupId>
             <artifactId>Dependency</artifactId>
             <version>d6cdefd488</version>
             <scope>compile</scope>
@@ -144,8 +137,15 @@
 
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
+            <artifactId>Config</artifactId>
+            <version>487e622ba8</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.request-plugins-for-free</groupId>
             <artifactId>File-Util</artifactId>
-            <version>b49438e851</version>
+            <version>b077ece268</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -1,7 +1,7 @@
 package me.tofpu.contract.data.path;
 
-import com.github.requestpluginsforfree.ConfigAPI;
-import com.github.requestpluginsforfree.type.config.ConfigType;
+import com.github.requestpluginsforfree.config.ConfigAPI;
+import com.github.requestpluginsforfree.config.type.config.ConfigType;
 import me.tofpu.contract.data.path.type.PathType;
 
 public class Path {

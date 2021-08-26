@@ -2,8 +2,8 @@ package me.tofpu.contract.util.confirmation.manager;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.requestpluginsforfree.ConfigAPI;
-import com.github.requestpluginsforfree.type.config.ConfigType;
+import com.github.requestpluginsforfree.config.ConfigAPI;
+import com.github.requestpluginsforfree.config.type.config.ConfigType;
 import me.tofpu.contract.util.confirmation.Confirmation;
 
 import java.util.Optional;
@@ -41,7 +41,7 @@ public class ConfirmationRegistry {
     private Optional<Confirmation> get(final UUID receiver){
         for (final Confirmation confirmation : this.confirmations.asMap().values()){
             if (confirmation.getReceiver().equals(receiver)){
-                System.out.println(confirmation.toString());
+                System.out.println(confirmation);
                 return Optional.of(confirmation);
             }
         }
