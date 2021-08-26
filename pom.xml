@@ -111,6 +111,7 @@
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.10.10</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -129,22 +130,22 @@
 
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
-            <artifactId>config</artifactId>
-            <version>1.0.0</version>
+            <artifactId>Config</artifactId>
+            <version>ab39e4bc37</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
-            <artifactId>dependency</artifactId>
-            <version>1.0.0</version>
+            <artifactId>Dependency</artifactId>
+            <version>d6cdefd488</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
-            <artifactId>file-util</artifactId>
-            <version>1.0.0</version>
+            <artifactId>File-Util</artifactId>
+            <version>b49438e851</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
