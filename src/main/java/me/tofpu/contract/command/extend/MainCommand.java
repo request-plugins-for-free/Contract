@@ -155,6 +155,12 @@ public class MainCommand extends ExtraBaseCommand {
         Util.message(employer, Path.STANDARD_REQUEST_DENIED_FROM, new String[]{"%name%"}, contractor.name());
     }
 
+    @Subcommand("current")
+    @CommandAlias("current")
+    public void onCurrent(final User user, final Contract contract){
+        user.ifPresent(player -> Util.message(player, formatContract(contract)));
+    }
+
     @Subcommand("rate")
     @CommandAlias("rate")
     @CommandCompletion("@contractsEnded @range:0-5")

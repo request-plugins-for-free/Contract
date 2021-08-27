@@ -1,6 +1,7 @@
 package me.tofpu.contract.command;
 
 import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.InvalidCommandArgument;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.command.extend.MainCommand;
 import me.tofpu.contract.contract.Contract;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CommandHandler {
     private final BukkitCommandManager commandManager;
@@ -54,10 +56,16 @@ public class CommandHandler {
                 return userService.getUser(arg).orElse(null);
             }
         });
-
         commandManager.getCommandContexts().registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationRegistry().get(context.getPlayer().getUniqueId(), false).orElse(null));
+        commandManager.getCommandContexts().registerIssuerAwareContext(Contract.class, context -> {
+            final Optional<User> optional = userService.getUser(context.getPlayer().getUniqueId());
+            final Optional<Contract> contract;
+            if (optional.isPresent() && (contract = optional.get().currentContract()).isPresent()){
+                return contract.get();
+            }
+            throw new InvalidCommandArgument("You do not have a current contract right now...");
+        });
 
-        // c
         // ommand registrations
         commandManager.registerCommand(new MainCommand(userService, economy, contractService));
     }
