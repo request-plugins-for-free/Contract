@@ -52,7 +52,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("create")
     @CommandCompletion("@players")
     @Syntax("<contractor> <length> <contract-amount> <description>")
-    @CommandPermission("contract.create")
+    @CommandPermission("contract.send")
     @Description("sends a contract to the contractor")
     public void onCreate(@Flags("self") final User employer, final User contractor, final long length, final double amount, final String description) {
         if (employer == null || contractor == null) return;
@@ -75,17 +75,18 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
 
-        final AtomicBoolean enough = new AtomicBoolean(false);
-        employer.ifPresent(player ->
-                enough.set(this.economy.getBalance(player) >= amount)
-        );
-
-        // if employer doesn't have enough money
-        if (!enough.get()){
-            Util.message(employer, Path.ERROR_CONTRACT_NOT_ENOUGH_FUNDS);
+        // if contractor lacks the permission node "contract.receive"
+        if (!contractor.player().hasPermission("contract.receive")){
+            Util.message(employer, Path.ERROR_CONTRACT_LACK_PERMISSION, new String[]{"%name%"}, contractor.name());
             return;
         }
 
+        // if employer doesn't have enough money
+        final Player player = employer.player();
+        if (!hasEnough(employer, amount)){
+            Util.message(employer, Path.ERROR_CONTRACT_NOT_ENOUGH_FUNDS);
+            return;
+        }
         final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length * 60, amount);
         Confirmation.send(employer.uniqueId(), contractor.uniqueId(), contract);
 
@@ -113,7 +114,7 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
         final Contract contract = confirmation.accept();
-        employer.ifPresent(player -> this.economy.withdrawPlayer(player, contract.amount()));
+        this.economy.withdrawPlayer(employer.player(), contract.amount());
 
         employer.currentContract(contract);
         contractor.currentContract(contract);
@@ -146,7 +147,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("current")
     @Description("your current contract")
     public void onCurrent(final User user, final Contract contract){
-        user.ifPresent(player -> Util.message(player, formatContract(contract)));
+        Util.message(user.player(), formatContract(contract));
     }
 
     @Subcommand("rate")
@@ -220,10 +221,7 @@ public class MainCommand extends ExtraBaseCommand {
     }
 
     private boolean hasEnough(final User employer, final double amount){
-        final boolean[] enough = {false};
-        employer.ifPresent(player -> enough[0] = this.economy.getBalance(player) >= amount);
-
-        return enough[0];
+        return this.economy.getBalance(employer.player()) >= amount;
     }
 
     private String formatContract(final Contract contract) {
