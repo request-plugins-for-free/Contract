@@ -1,7 +1,6 @@
 package me.tofpu.contract.command;
 
-import co.aikar.commands.BukkitCommandManager;
-import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.*;
 import com.google.common.collect.Lists;
 import me.tofpu.contract.command.extend.MainCommand;
 import me.tofpu.contract.contract.Contract;
@@ -43,11 +42,12 @@ public class CommandHandler {
     }
 
     public void initialize() {
-        // command completions
-        commandManager.getCommandCompletions().registerCompletion("contractsId", context -> contractsId(context.getPlayer(), false));
-        commandManager.getCommandCompletions().registerCompletion("contractsEnded", context -> contractsId(context.getPlayer(), true));
+        final CommandCompletions<BukkitCommandCompletionContext> completions = commandManager.getCommandCompletions();
+        completions.registerCompletion("contractsId", context -> contractsId(context.getPlayer(), false));
+        completions.registerCompletion("contractsEnded", context -> contractsId(context.getPlayer(), true));
 
-        commandManager.getCommandContexts().registerIssuerAwareContext(User.class, context -> {
+        final CommandContexts<BukkitCommandExecutionContext> contexts = commandManager.getCommandContexts();
+        contexts.registerIssuerAwareContext(User.class, context -> {
             System.out.println(context.hasFlag("self") + " | " + context.getFirstArg());
             if (context.hasFlag("self"))
                 return userService.getUser(context.getPlayer().getUniqueId()).orElse(null);
@@ -56,8 +56,8 @@ public class CommandHandler {
                 return userService.getUser(arg).orElse(null);
             }
         });
-        commandManager.getCommandContexts().registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationRegistry().get(context.getPlayer().getUniqueId(), false).orElse(null));
-        commandManager.getCommandContexts().registerIssuerAwareContext(Contract.class, context -> {
+        contexts.registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationRegistry().get(context.getPlayer().getUniqueId(), false).orElse(null));
+        contexts.registerIssuerAwareContext(Contract.class, context -> {
             final Optional<User> optional = userService.getUser(context.getPlayer().getUniqueId());
             final Optional<Contract> contract;
             if (optional.isPresent() && (contract = optional.get().currentContract()).isPresent()){

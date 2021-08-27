@@ -59,7 +59,6 @@ public class MainCommand extends ExtraBaseCommand {
 
         // if player instance of contractor doesn't exist
         if (!contractor.isPresent()) {
-//            contractor.ifPresent(player -> player.sendMessage("target is not online"));
             Util.message(employer, Path.ERROR_TARGET_OFFLINE, new String[]{"%name%"}, contractor.name());
             return;
         }
@@ -83,16 +82,12 @@ public class MainCommand extends ExtraBaseCommand {
 
         // if employer doesn't have enough money
         if (!enough.get()){
-//            employer.ifPresent(player -> player.sendMessage("You do not have enough money!"));
             Util.message(employer, Path.ERROR_CONTRACT_NOT_ENOUGH_FUNDS);
             return;
         }
 
         final Contract contract = ContractFactory.create(employer.name(), employer.uniqueId(), contractor.name(), contractor.uniqueId(), description, length * 60, amount);
         Confirmation.send(employer.uniqueId(), contractor.uniqueId(), contract);
-
-//        employer.ifPresent(player -> player.sendMessage("You have sent a confirmation to " + contractor.name()));
-//        contractor.ifPresent(player -> player.sendMessage(employer.name() + " has sent you a contract, you can accept/deny the contract by typing /contractor accept/deny (employer)"));
 
         Util.message(employer, Path.STANDARD_CONTRACT_SENT_TO, new String[]{"%name%"}, contractor.name());
         Util.message(contractor, Path.STANDARD_CONTRACT_SENT_FROM, new String[]{"%name%"}, employer.name());
@@ -104,18 +99,14 @@ public class MainCommand extends ExtraBaseCommand {
     @Syntax("<employer>")
     @Description("Accept an contract from an employer")
     public void accept(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
-        // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
         if (confirmation == null || isSame(employer, contractor)) {
-//            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation..."));
             Util.message(contractor, Path.ERROR_REQUEST_NO_PENDING);
             return;
         }
         // if employer doesn't have enough amount
         if (!hasEnough(employer, confirmation.peek().amount())){
             confirmation.invalidate();
-//            employer.ifPresent(player -> player.sendMessage("Your contract has been cancelled due to lack of enough funds."));
-//            contractor.ifPresent(player -> player.sendMessage("The contract has been cancelled due to lack of employer's funds."));
 
             Util.message(employer, Path.ERROR_REQUEST_LACKING_FUNDS_FROM, new String[]{"%name%"}, contractor.name());
             Util.message(contractor, Path.ERROR_REQUEST_LACKING_FUNDS_TO, new String[]{"%name%"}, employer.name());
@@ -129,10 +120,7 @@ public class MainCommand extends ExtraBaseCommand {
 
         contractService.registerContract(contract);
 
-//        contractor.ifPresent(player -> player.sendMessage("You have accepted " + employer.name() + " contract request!"));
         Util.message(contractor, Path.STANDARD_REQUEST_ACCEPTED_TO, new String[]{"%name%"}, employer.name());
-
-//        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has accepted your contract request!"));
         Util.message(employer, Path.STANDARD_REQUEST_ACCEPTED_FROM, new String[]{"%name%"}, contractor.name());
     }
 
@@ -145,16 +133,12 @@ public class MainCommand extends ExtraBaseCommand {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
         if (confirmation == null) {
-//            contractor.ifPresent(player -> player.sendMessage("You do not have a pending confirmation from " + player.getName()));
             Util.message(contractor, Path.ERROR_REQUEST_NO_PENDING);
             return;
         }
         ConfirmationRegistry.getConfirmationRegistry().invalidate(confirmation);
 
-        // contractor.ifPresent(player -> player.sendMessage("You have denied " + employer.name() + " contract request!"));
         Util.message(contractor, Path.STANDARD_REQUEST_DENIED_TO, new String[]{"%name%"}, employer.name());
-
-//        employer.ifPresent(player -> player.sendMessage(contractor.name() + " has denied your contract request!"));
         Util.message(employer, Path.STANDARD_REQUEST_DENIED_FROM, new String[]{"%name%"}, contractor.name());
     }
 
@@ -195,9 +179,6 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
 
-        // TODO: MESSAGE THE CONTRACTOR SAYING THE EMPLOYER HAS RATED YOU
-        // TODO: MESSAGE THE EMPLOYER SAYING YOU'VE SUCCESSFULLY RATED THE EMPLOYER
-
         contract.review().rate((double) Math.round(rate * 100) / 100);
         contract.review().description(description);
 
@@ -214,14 +195,6 @@ public class MainCommand extends ExtraBaseCommand {
     @Description("Shows you all of your contracts")
     public void onHistory(final Player player, @co.aikar.commands.annotation.Optional String id) {
         final boolean showAll = id == null || id.isEmpty();
-        // > Contract JAI1JDJA-1J29-GHMAHF
-        // Employer: HoodBoy
-        // Description: Clean up my Minecraft House
-        // Length: 20 minutes
-        // Money: 1000$
-        // > Review
-        // Rate: 1 stars
-        // Review: this motherfucker' somehow made it worse & stole my fuckin' money, I ain't hirin' nobody no more.
 
         final StringBuilder builder = new StringBuilder();
         if (showAll) {
