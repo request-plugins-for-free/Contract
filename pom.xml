@@ -138,7 +138,7 @@
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
             <artifactId>Config</artifactId>
-            <version>487e622ba8</version>
+            <version>e302daf24f</version>
             <scope>compile</scope>
         </dependency>
 

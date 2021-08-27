@@ -5,6 +5,16 @@ import com.github.requestpluginsforfree.config.type.config.ConfigType;
 import me.tofpu.contract.data.path.type.PathType;
 
 public class Path {
+    private static final String SETTINGS = "settings.";
+    private static final String SETTINGS_CHAT = SETTINGS + "chat.";
+
+    // settings
+    public static final Value<Integer> SETTINGS_EXPIRE_ON = new Value<>(SETTINGS + "expire-on", ConfigType.INTEGER, PathType.CONFIG);
+
+    // chat
+    public static final Value<Boolean> SETTINGS_CHAT_DISABLE = new Value<>(SETTINGS_CHAT + "disable", ConfigType.BOOLEAN, PathType.CONFIG);
+    public static final Value<String> SETTINGS_CHAT_FORMAT = new Value<>(SETTINGS_CHAT + "format", ConfigType.STRING, PathType.CONFIG);
+
     private static final String STANDARD = "standard.";
     private static final String STANDARD_CONTACT = STANDARD + "contract.";
     private static final String STANDARD_REQUEST = STANDARD + "request.";
