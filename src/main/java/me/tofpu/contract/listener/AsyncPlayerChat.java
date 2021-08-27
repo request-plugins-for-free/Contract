@@ -20,7 +20,7 @@ public class AsyncPlayerChat implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
         if (!Path.SETTINGS_CHAT_DISABLE.getValue()) return;
-        
+
         final Optional<User> optional = userService.getUser(event.getPlayer().getUniqueId());
         optional.ifPresent(user -> Util.message(user, Path.SETTINGS_CHAT_FORMAT, new String[]{"%name%", "%message%"}, "%1$s", "%2$s"));
     }

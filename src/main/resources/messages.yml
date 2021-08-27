@@ -4,6 +4,7 @@ standard:
     sent-from: "&e%name% has sent you a contract request!\n&eYou can accept/deny by typing either /accept %name% or /deny %name%"
     completed-to: "&eThe contract has ended!\n&eYou have received &6%amount% &ebalance!"
     completed-from: "&eThe contract has ended!\n&eYou can rate the contract's work by typing &6/rate %id% 5 Excellent Work!"
+    expired: "&eYour contract to %contractor% has expired."
 
   request:
     accepted-to: "&eYou have accepted the contract from %name%!\n&eThe contract has started!"

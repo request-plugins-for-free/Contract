@@ -25,6 +25,7 @@ public class Path {
 
     public static final Value<String> STANDARD_CONTRACT_COMPLETED_TO = new Value<>(STANDARD_CONTACT + "completed-to", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> STANDARD_CONTRACT_COMPLETED_FROM = new Value<>(STANDARD_CONTACT + "completed-from", ConfigType.STRING, PathType.MESSAGES);
+    public static final Value<String> STANDARD_CONTRACT_EXPIRY = new Value<>(STANDARD_CONTACT + "expired", ConfigType.STRING, PathType.MESSAGES);
 
     public static final Value<String> STANDARD_REQUEST_ACCEPTED_TO = new Value<>(STANDARD_REQUEST + "accepted-to", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> STANDARD_REQUEST_ACCEPTED_FROM = new Value<>(STANDARD_REQUEST + "accepted-from", ConfigType.STRING, PathType.MESSAGES);
