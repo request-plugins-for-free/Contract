@@ -42,4 +42,9 @@ public interface User extends Stars {
     boolean isPresent();
 
     void ifPresent(final Consumer<Player> consumer);
+
+    /**
+     * @return the player instance of user
+     */
+    Player player();
 }
