@@ -49,6 +49,7 @@ public class Path {
     public static final Value<String> ERROR_CONTRACT_SELF = new Value<>(ERROR_CONTRACT + "self", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_CONTRACT_BUSY = new Value<>(ERROR_CONTRACT + "busy", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_CONTRACT_NOT_ENOUGH_FUNDS = new Value<>(ERROR_CONTRACT + "not-enough-funds", ConfigType.STRING, PathType.MESSAGES);
+    public static final Value<String> ERROR_CONTRACT_LACK_PERMISSION = new Value<>(ERROR_CONTRACT + "lack-permission", ConfigType.STRING, PathType.MESSAGES);
 
     public static final Value<String> ERROR_REQUEST_NO_PENDING = new Value<>(ERROR_REQUEST + "no-pending", ConfigType.STRING, PathType.MESSAGES);
     public static final Value<String> ERROR_REQUEST_LACKING_FUNDS_TO = new Value<>(ERROR_REQUEST + "lacking-funds-to", ConfigType.STRING, PathType.MESSAGES);

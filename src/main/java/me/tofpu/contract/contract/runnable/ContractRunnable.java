@@ -8,6 +8,7 @@ import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.Util;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ContractRunnable extends BukkitRunnable {
@@ -41,11 +42,13 @@ public class ContractRunnable extends BukkitRunnable {
                     employer.currentContract(null);
                     contractor.currentContract(null);
 
-                    Util.message(employer, Path.STANDARD_CONTRACT_COMPLETED_FROM, new String[]{"%id%"}, contract.id().toString());
-                    contractor.ifPresent(player -> {
-                        Util.message(player, Path.STANDARD_CONTRACT_COMPLETED_TO, new String[]{"%amount%"}, contract.amount() + "");
-                        economy.depositPlayer(player, contract.amount());
-                    });
+                    final Player employerPlayer = employer.player();
+                    final Player contractorPlayer = contractor.player();
+
+                    Util.message(employerPlayer, Path.STANDARD_CONTRACT_COMPLETED_FROM, new String[]{"%id%"}, contract.id().toString());
+
+                    Util.message(contractorPlayer, Path.STANDARD_CONTRACT_COMPLETED_TO, new String[]{"%amount%"}, contract.amount() + "");
+                    economy.depositPlayer(contractorPlayer, contract.amount());
                 }
             });
         }

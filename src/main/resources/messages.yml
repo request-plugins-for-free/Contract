@@ -25,6 +25,7 @@ error:
     self: "&cYou cannot send yourself a contract!"
     busy: "&cYou cannot create a contract while you're in one!"
     not-enough-funds: "&cYou do not have enough funds for this contract!"
+    lack-permission: "&c%name% cannot receive contracts."
 
   request:
     no-pending: "&cYou do not have a contract pending!"
