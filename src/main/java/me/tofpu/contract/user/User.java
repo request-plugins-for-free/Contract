@@ -41,6 +41,11 @@ public interface User extends Stars {
      */
     boolean isPresent();
 
+    /**
+     * This will accept the consumer if player is online
+     *
+     * @param consumer the player consumer
+     */
     void ifPresent(final Consumer<Player> consumer);
 
     /**

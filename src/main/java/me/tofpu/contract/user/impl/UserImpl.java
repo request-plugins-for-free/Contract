@@ -91,6 +91,14 @@ public class UserImpl implements User {
     }
 
     /**
+     * @return the player instance of user
+     */
+    @Override
+    public Player player() {
+        return this.player;
+    }
+
+    /**
      * @return the user total rating
      */
     @Override
