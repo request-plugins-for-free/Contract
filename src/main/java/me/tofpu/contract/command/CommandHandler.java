@@ -49,8 +49,7 @@ public class CommandHandler {
         final CommandContexts<BukkitCommandExecutionContext> contexts = commandManager.getCommandContexts();
         contexts.registerIssuerAwareContext(User.class, context -> {
             System.out.println(context.hasFlag("self") + " | " + context.getFirstArg());
-            if (context.hasFlag("self"))
-                return userService.getUser(context.getPlayer().getUniqueId()).orElse(null);
+            if (context.hasFlag("self")) return userService.getUser(context.getPlayer().getUniqueId()).orElse(null);
             else {
                 final String arg = context.popFirstArg();
                 return userService.getUser(arg).orElse(null);
@@ -60,7 +59,7 @@ public class CommandHandler {
         contexts.registerIssuerAwareContext(Contract.class, context -> {
             final Optional<User> optional = userService.getUser(context.getPlayer().getUniqueId());
             final Optional<Contract> contract;
-            if (optional.isPresent() && (contract = optional.get().currentContract()).isPresent()){
+            if (optional.isPresent() && (contract = optional.get().currentContract()).isPresent()) {
                 return contract.get();
             }
             throw new InvalidCommandArgument("You do not have a current contract right now...");

@@ -66,7 +66,7 @@ public class Path {
 
         private T value;
 
-        public Value(final String path, ConfigType<?> type, final PathType pathType){
+        public Value(final String path, ConfigType<?> type, final PathType pathType) {
             this.path = path;
             this.type = type;
             this.pathType = pathType;
@@ -77,7 +77,7 @@ public class Path {
             return value;
         }
 
-        public T reload(){
+        public T reload() {
             this.value = ConfigAPI.get(pathType.name(), path, type);
             return value;
         }

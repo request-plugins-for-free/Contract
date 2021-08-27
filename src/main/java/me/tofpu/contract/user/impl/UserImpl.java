@@ -3,7 +3,6 @@ package me.tofpu.contract.user.impl;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
-import me.tofpu.contract.user.service.UserService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,6 +14,7 @@ import java.util.function.Consumer;
 
 public class UserImpl implements User {
     private static ContractService contractService;
+
     public static void initialize(final ContractService contractService) {
         UserImpl.contractService = contractService;
     }
@@ -81,7 +81,7 @@ public class UserImpl implements User {
      * @return returns true if player instance exists otherwise false
      */
     @Override
-    public boolean isPresent(){
+    public boolean isPresent() {
         return this.player != null;
     }
 
@@ -114,8 +114,8 @@ public class UserImpl implements User {
     public double averageRating() {
         double average = 0;
         final List<Contract> contracts = contractService.of(uniqueId());
-        for (final Contract contract : contracts){
-            average+= contract.review().rate();
+        for (final Contract contract : contracts) {
+            average += contract.review().rate();
         }
         return average / contracts.size();
     }

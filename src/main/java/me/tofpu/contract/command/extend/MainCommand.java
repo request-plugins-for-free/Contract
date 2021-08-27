@@ -1,15 +1,15 @@
 package me.tofpu.contract.command.extend;
 
 import co.aikar.commands.annotation.*;
-import me.tofpu.contract.data.path.Path;
-import me.tofpu.contract.user.service.UserService;
-import me.tofpu.contract.util.Util;
 import me.tofpu.contract.command.base.ExtraBaseCommand;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
 import me.tofpu.contract.contract.review.ContractReview;
 import me.tofpu.contract.contract.service.ContractService;
+import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.user.User;
+import me.tofpu.contract.user.service.UserService;
+import me.tofpu.contract.util.Util;
 import me.tofpu.contract.util.confirmation.Confirmation;
 import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 import net.milkbowl.vault.economy.Economy;
@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandAlias("contract")
 public class MainCommand extends ExtraBaseCommand {
@@ -51,9 +50,9 @@ public class MainCommand extends ExtraBaseCommand {
     @Subcommand("create")
     @CommandAlias("create")
     @CommandCompletion("@players")
-    @Syntax("<contractor> <length> <contract-amount> <description>")
+    @Syntax("<contractor> <length> <amount> <description>")
     @CommandPermission("contract.send")
-    @Description("sends a contract to the contractor")
+    @Description("Sends a contract to the contractor")
     public void onCreate(@Flags("self") final User employer, final User contractor, final long length, final double amount, final String description) {
         if (employer == null || contractor == null) return;
 
@@ -63,8 +62,8 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
 
-        if (isSame(employer, contractor)){
-//            employer.ifPresent(player -> player.sendMessage("You cannot send yourself a contract, silly!"));
+        if (isSame(employer, contractor)) {
+            //            employer.ifPresent(player -> player.sendMessage("You cannot send yourself a contract, silly!"));
             Util.message(employer, Path.ERROR_CONTRACT_SELF);
             return;
         }
@@ -76,14 +75,13 @@ public class MainCommand extends ExtraBaseCommand {
         }
 
         // if contractor lacks the permission node "contract.receive"
-        if (!contractor.player().hasPermission("contract.receive")){
+        if (!contractor.player().hasPermission("contract.receive")) {
             Util.message(employer, Path.ERROR_CONTRACT_LACK_PERMISSION, new String[]{"%name%"}, contractor.name());
             return;
         }
 
         // if employer doesn't have enough money
-        final Player player = employer.player();
-        if (!hasEnough(employer, amount)){
+        if (!hasEnough(employer, amount)) {
             Util.message(employer, Path.ERROR_CONTRACT_NOT_ENOUGH_FUNDS);
             return;
         }
@@ -98,7 +96,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("accept")
     @CommandCompletion("@players")
     @Syntax("<employer>")
-    @Description("Accept an contract from an employer")
+    @Description("Accept a contract from an employer")
     public void accept(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
         if (contractor == null || employer == null) return;
         if (confirmation == null || isSame(employer, contractor)) {
@@ -106,7 +104,7 @@ public class MainCommand extends ExtraBaseCommand {
             return;
         }
         // if employer doesn't have enough amount
-        if (!hasEnough(employer, confirmation.peek().amount())){
+        if (!hasEnough(employer, confirmation.peek().amount())) {
             confirmation.invalidate();
 
             Util.message(employer, Path.ERROR_REQUEST_LACKING_FUNDS_FROM, new String[]{"%name%"}, contractor.name());
@@ -129,7 +127,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("deny")
     @CommandPermission("@players")
     @Syntax("<employer>")
-    @Description("Deny an contract from an employer")
+    @Description("Deny a contract from an employer")
     public void deny(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
@@ -145,8 +143,8 @@ public class MainCommand extends ExtraBaseCommand {
 
     @Subcommand("current")
     @CommandAlias("current")
-    @Description("your current contract")
-    public void onCurrent(final User user, final Contract contract){
+    @Description("Shows your current contract")
+    public void onCurrent(final User user, final Contract contract) {
         Util.message(user.player(), formatContract(contract));
     }
 
@@ -175,7 +173,7 @@ public class MainCommand extends ExtraBaseCommand {
         }
 
         // if contract employer does not equal to the so-called "employer" (issuer) unique id
-        if (!contract.employerId().equals(employer.getUniqueId())){
+        if (!contract.employerId().equals(employer.getUniqueId())) {
             Util.message(employer, Path.ERROR_RATE_ONLY_EMPLOYER);
             return;
         }
@@ -216,25 +214,16 @@ public class MainCommand extends ExtraBaseCommand {
         player.sendMessage(Util.colorize(builder.toString()));
     }
 
-    private boolean isSame(final User one, final User two){
+    private boolean isSame(final User one, final User two) {
         return one.uniqueId().equals(two.uniqueId());
     }
 
-    private boolean hasEnough(final User employer, final double amount){
+    private boolean hasEnough(final User employer, final double amount) {
         return this.economy.getBalance(employer.player()) >= amount;
     }
 
     private String formatContract(final Contract contract) {
-        final String format = " &6&l&m*&r &6Contract &e%contract-id%:\n" +
-                "  &6&l&m*&r &eEmployer: &6%employer-name%\n" +
-                "  &6&l&m*&r &eContractor: &6%contractor-name%\n" +
-                "  &6&l&m*&r &eStatus: &6%status%\n" +
-                "  &6&l&m*&r &eDescription: &6%description%\n" +
-                "  &6&l&m*&r &eLength: &6%length%\n" +
-                "  &6&l&m*&r &eMoney: &6%money%\n" +
-                " &6&l&m*&r &6Review\n" +
-                "  &6&l&m*&r &eRate: &6%rate% &estars\n" +
-                "  &6&l&m*&r &eReview: &6%review%";
+        final String format = " &6&l&m*&r &6Contract &e%contract-id%:\n" + "  &6&l&m*&r &eEmployer: &6%employer-name%\n" + "  &6&l&m*&r &eContractor: &6%contractor-name%\n" + "  &6&l&m*&r &eStatus: &6%status%\n" + "  &6&l&m*&r &eDescription: &6%description%\n" + "  &6&l&m*&r &eLength: &6%length%\n" + "  &6&l&m*&r &eMoney: &6%money%\n" + " &6&l&m*&r &6Review\n" + "  &6&l&m*&r &eRate: &6%rate% &estars\n" + "  &6&l&m*&r &eReview: &6%review%";
         final ContractReview review = contract.review();
 
         return Util.WordReplacer.replace(format, new String[]{"%contract-id%", "%employer-name%", "%contractor-name%", "%status%", "%description%", "%length%", "%money%", "%rate%", "%review%"}, contract.id().toString(), contract.employerName(), contract.employerName(), contract.hasEnded() ? "Ended" : "Available", contract.description(), contract.length() + "", contract.amount() + "", review.rate() == -1 ? "N/A" : review.rate() + "", review.description() == null ? "N/A" : review.description());

@@ -25,24 +25,25 @@ public class Util {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static void message(final User user, final Path.Value<?> value){
+    public static void message(final User user, final Path.Value<?> value) {
         user.ifPresent(player -> message(player, value));
     }
 
-    public static void message(final User user, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith){
+    public static void message(final User user, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith) {
         user.ifPresent(player -> message(player, value, replaceArray, replaceWith));
     }
 
-    public static void message(final CommandSender sender, final Path.Value<?> value){
+    public static void message(final CommandSender sender, final Path.Value<?> value) {
         message(sender, value.getValue() + "");
     }
 
-    public static void message(final CommandSender sender, String message){
-        if (DependencyAPI.get("PlaceholderAPI").isAvailable() && sender instanceof Player) message = PlaceholderAPI.setBracketPlaceholders(((Player) sender).getPlayer(), message);
+    public static void message(final CommandSender sender, String message) {
+        if (DependencyAPI.get("PlaceholderAPI").isAvailable() && sender instanceof Player)
+            message = PlaceholderAPI.setBracketPlaceholders(((Player) sender).getPlayer(), message);
         sender.sendMessage(colorize(message));
     }
 
-    public static void message(final CommandSender sender, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith){
+    public static void message(final CommandSender sender, final Path.Value<?> value, final String[] replaceArray, final String... replaceWith) {
         message(sender, colorize(WordReplacer.replace(value.getValue() + "", replaceArray, replaceWith)));
     }
 

@@ -28,10 +28,9 @@ public class ContractImpl implements Contract {
     private boolean frozen;
     private long length;
 
-    public ContractImpl(final UUID id, final boolean frozen, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long length, final double amount) {
+    public ContractImpl(final UUID id, final String employerName, final UUID employerId, final String contractorName, final UUID contractorId, final ContractReview review, final String description, final long length, final double amount) {
         this.id = id;
         this.frozen = true;
-//        freeze(frozen);
 
         this.employerName = employerName;
         this.employerId = employerId;
@@ -127,7 +126,7 @@ public class ContractImpl implements Contract {
             this.runnable.cancel();
         } else {
             // if it was frozen, set the startedAt to now
-            if (this.frozen){
+            if (this.frozen) {
                 this.startedAt = System.nanoTime();
             }
             // trying to get te employer & contractor player instance

@@ -15,10 +15,11 @@ public class ContractRunnable extends BukkitRunnable {
     private static UserService userService;
     private static Economy economy;
 
-    public static void initialize(final UserService userService, final Economy economy){
+    public static void initialize(final UserService userService, final Economy economy) {
         ContractRunnable.userService = userService;
         ContractRunnable.economy = economy;
     }
+
     private final Contract contract;
 
     public ContractRunnable(final Contract contract) {

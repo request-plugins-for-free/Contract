@@ -7,9 +7,10 @@ import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 import java.util.UUID;
 
 public class Confirmation {
-    public static Confirmation send(final UUID sender, final UUID target, final Contract contract){
+    public static Confirmation send(final UUID sender, final UUID target, final Contract contract) {
         return ConfirmationRegistry.getConfirmationRegistry().register(new Confirmation(sender, target, contract));
     }
+
     private final UUID sender;
     private final UUID receiver;
     private final Contract contract;
@@ -28,17 +29,17 @@ public class Confirmation {
         return receiver;
     }
 
-    public Contract peek(){
+    public Contract peek() {
         return ContractFactory.clone(contract);
     }
 
-    public Contract accept(){
+    public Contract accept() {
         ConfirmationRegistry.getConfirmationRegistry().invalidate(this);
         contract.freeze(false);
         return contract;
     }
 
-    public void invalidate(){
+    public void invalidate() {
         ConfirmationRegistry.getConfirmationRegistry().invalidate(this);
     }
 

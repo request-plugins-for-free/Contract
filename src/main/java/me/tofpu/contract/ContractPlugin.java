@@ -11,12 +11,12 @@ import me.tofpu.contract.contract.runnable.ContractRunnable;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.contract.service.impl.ContractServiceImpl;
 import me.tofpu.contract.data.DataManager;
+import me.tofpu.contract.data.listener.PlayerJoinListener;
 import me.tofpu.contract.data.listener.PlayerQuitListener;
 import me.tofpu.contract.expansion.ContractExpansion;
 import me.tofpu.contract.listener.AsyncPlayerChat;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.factory.UserFactory;
-import me.tofpu.contract.data.listener.PlayerJoinListener;
 import me.tofpu.contract.user.impl.UserImpl;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.user.service.impl.UserServiceImpl;
@@ -71,12 +71,12 @@ public final class ContractPlugin extends JavaPlugin {
         new ContractExpansion(getDescription(), userService);
 
         final Dependency<?> vault = DependencyAPI.get("vault");
-        if (vault != null && vault.isAvailable()){
+        if (vault != null && vault.isAvailable()) {
             this.economy = (Economy) vault.getInstance();
         }
     }
 
-    private void initializeListeners(){
+    private void initializeListeners() {
         final PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new PlayerJoinListener(dataManager), this);
         manager.registerEvents(new PlayerQuitListener(dataManager), this);

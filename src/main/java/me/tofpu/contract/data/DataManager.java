@@ -46,7 +46,7 @@ public class DataManager {
             if (!file.exists()) file.mkdirs();
         }
 
-        for (final PluginFile file : pluginFiles){
+        for (final PluginFile file : pluginFiles) {
             file.initialize(false);
         }
     }
