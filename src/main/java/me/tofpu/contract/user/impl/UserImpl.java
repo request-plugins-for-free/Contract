@@ -19,18 +19,20 @@ public class UserImpl implements User {
         UserImpl.contractService = contractService;
     }
 
+    private final Player player;
     private final UUID uniqueId;
     private String name;
     private Contract currentContract;
     private double totalRating;
 
     public UserImpl(final UUID uniqueId) {
+        this.player = Bukkit.getPlayer(uniqueId);
         this.uniqueId = uniqueId;
     }
 
     public UserImpl(final String name, final UUID uniqueId, final Contract currentContract, final double totalRating) {
+        this(uniqueId);
         this.name = name;
-        this.uniqueId = uniqueId;
         this.currentContract = currentContract;
         this.totalRating = totalRating;
     }
@@ -79,16 +81,13 @@ public class UserImpl implements User {
      * @return returns true if player instance exists otherwise false
      */
     @Override
-    public boolean isPresent() {
-        // TODO: CACHE THIS POSSIBLY?
-        return Bukkit.getPlayer(this.uniqueId) != null;
+    public boolean isPresent(){
+        return this.player != null;
     }
 
     @Override
     public void ifPresent(final Consumer<Player> consumer) {
-        // TODO: CACHE THIS POSSIBLY?
-        final Player player = Bukkit.getPlayer(this.uniqueId);
-        if (player != null) consumer.accept(player);
+        if (this.player != null) consumer.accept(player);
     }
 
     /**
