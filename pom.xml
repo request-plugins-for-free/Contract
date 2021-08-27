@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.github.request-plugins-for-free</groupId>
             <artifactId>Dependency</artifactId>
-            <version>d6cdefd488</version>
+            <version>e53d5faab1</version>
             <scope>compile</scope>
         </dependency>
 

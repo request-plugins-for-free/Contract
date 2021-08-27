@@ -68,9 +68,12 @@ public final class ContractPlugin extends JavaPlugin {
         DependencyAPI.register(new PlaceholderDependency());
 
         DependencyAPI.initialize(this);
-        new ContractExpansion(getDescription(), userService);
+        final Dependency<?> placeholderAPI = DependencyAPI.get("PlaceholderAPI");
+        if (placeholderAPI != null && placeholderAPI.isAvailable()){
+            new ContractExpansion(getDescription(), userService);
+        }
 
-        final Dependency<?> vault = DependencyAPI.get("vault");
+        final Dependency<?> vault = DependencyAPI.get("Vault");
         if (vault != null && vault.isAvailable()) {
             this.economy = (Economy) vault.getInstance();
         }

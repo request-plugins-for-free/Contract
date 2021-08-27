@@ -2,5 +2,7 @@ name: Contract
 version: ${project.version}
 main: me.tofpu.contract.ContractPlugin
 authors: [ Tofpu ]
+softdepend:
+  - PlaceholderAPI
 depend:
   - Vault
