@@ -53,6 +53,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandCompletion("@players")
     @Syntax("<contractor> <length> <contract-amount> <description>")
     @CommandPermission("contract.create")
+    @Description("sends a contract to the contractor")
     public void onCreate(@Flags("self") final User employer, final User contractor, final long length, final double amount, final String description) {
         if (employer == null || contractor == null) return;
 
@@ -101,6 +102,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("accept")
     @CommandCompletion("@players")
     @Syntax("<employer>")
+    @Description("Accept an contract from an employer")
     public void accept(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
@@ -138,6 +140,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("deny")
     @CommandPermission("@players")
     @Syntax("<employer>")
+    @Description("Deny an contract from an employer")
     public void deny(@Flags("self") final User contractor, final User employer, final Confirmation confirmation) {
         // TODO: RELOAD BUG!
         if (contractor == null || employer == null) return;
@@ -157,6 +160,7 @@ public class MainCommand extends ExtraBaseCommand {
 
     @Subcommand("current")
     @CommandAlias("current")
+    @Description("your current contract")
     public void onCurrent(final User user, final Contract contract){
         user.ifPresent(player -> Util.message(player, formatContract(contract)));
     }
@@ -165,6 +169,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("rate")
     @CommandCompletion("@contractsEnded @range:0-5")
     @Syntax("<contract-id> <out-of-five> <review>")
+    @Description("Rate the contract's work once it's done")
     public void onRate(final Player employer, final String id, final double rate, final String description) {
         final UUID contractId = UUID.fromString(id);
         final Optional<Contract> optional = contractService.getContractById(contractId);
@@ -206,6 +211,7 @@ public class MainCommand extends ExtraBaseCommand {
     @CommandAlias("history")
     @CommandCompletion("@contractsId")
     @Syntax("[contract-id]")
+    @Description("Shows you all of your contracts")
     public void onHistory(final Player player, @co.aikar.commands.annotation.Optional String id) {
         final boolean showAll = id == null || id.isEmpty();
         // > Contract JAI1JDJA-1J29-GHMAHF
