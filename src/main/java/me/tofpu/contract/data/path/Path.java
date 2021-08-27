@@ -6,10 +6,11 @@ import me.tofpu.contract.data.path.type.PathType;
 
 public class Path {
     private static final String SETTINGS = "settings.";
+    private static final String SETTINGS_CONTRACT = SETTINGS + "contract.";
     private static final String SETTINGS_CHAT = SETTINGS + "chat.";
 
     // settings
-    public static final Value<Integer> SETTINGS_EXPIRE_ON = new Value<>(SETTINGS + "expire-on", ConfigType.INTEGER, PathType.CONFIG);
+    public static final Value<Integer> SETTINGS_EXPIRE_ON = new Value<>(SETTINGS_CONTRACT + "expire-on", ConfigType.INTEGER, PathType.CONFIG);
 
     // chat
     public static final Value<Boolean> SETTINGS_CHAT_DISABLE = new Value<>(SETTINGS_CHAT + "disable", ConfigType.BOOLEAN, PathType.CONFIG);

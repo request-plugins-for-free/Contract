@@ -1,6 +1,7 @@
 settings:
-  # The expiry interval is based on minutes (default: 2 minutes)
-  expire-on: 2
+  contract:
+    # The expiry interval is based on minutes (default: 2 minutes)
+    expire-on: 2
 
   chat:
     disable: false

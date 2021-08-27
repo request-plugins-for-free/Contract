@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.requestpluginsforfree.config.ConfigAPI;
 import com.github.requestpluginsforfree.config.type.config.ConfigType;
+import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.confirmation.Confirmation;
 import me.tofpu.contract.util.confirmation.listener.RemovalListener;
@@ -24,10 +25,8 @@ public class ConfirmationRegistry {
     private final Cache<UUID, Confirmation> confirmations;
 
     public ConfirmationRegistry(final UserService userService) {
-        final Integer expiry = ConfigAPI.get("config","settings.expire-on", ConfigType.INTEGER);
-
         this.confirmations = Caffeine.newBuilder()
-                .expireAfterWrite(expiry == null ? 1 : expiry, TimeUnit.MINUTES)
+                .expireAfterWrite(Path.SETTINGS_EXPIRE_ON.getValue(), TimeUnit.MINUTES)
                 .evictionListener(new RemovalListener(userService))
                 .build();
     }
