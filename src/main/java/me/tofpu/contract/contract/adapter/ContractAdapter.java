@@ -18,7 +18,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
     public void write(final JsonWriter out, final Contract value) throws IOException {
         out.beginObject();
         out.name("id").value(value.id().toString());
-        out.name("frozen").value(value.freeze());
 
         out.name("employer-name").value(value.employerName());
         out.name("employer-unique-id").value(value.employerId().toString());
@@ -43,7 +42,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
     public Contract read(final JsonReader in) throws IOException {
         in.beginObject();
         UUID id = null;
-        boolean frozen = false;
 
         String employerName = "";
         UUID employerUniqueId = null;
@@ -62,9 +60,6 @@ public class ContractAdapter extends TypeAdapter<Contract> {
             switch (in.nextName()) {
                 case "id":
                     id = UUID.fromString(in.nextString());
-                    break;
-                case "frozen":
-                    frozen = in.nextBoolean();
                     break;
                 case "employer-name":
                     employerName = in.nextString();
@@ -107,10 +102,13 @@ public class ContractAdapter extends TypeAdapter<Contract> {
                 case "length":
                     length = in.nextInt();
                     break;
+                default:
+                    in.skipValue();
+                    break;
             }
         }
 
         in.endObject();
-        return ContractFactory.create(id, frozen, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, length, amount);
+        return ContractFactory.create(id, employerName, employerUniqueId, contractorName, contractorUniqueId, review, description, length, amount);
     }
 }
