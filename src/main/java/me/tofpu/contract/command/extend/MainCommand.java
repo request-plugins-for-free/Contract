@@ -236,6 +236,6 @@ public class MainCommand extends ExtraBaseCommand {
         final String format = " &6&l&m*&r &6Contract &e%contract-id%:\n" + "  &6&l&m*&r &eEmployer: &6%employer-name%\n" + "  &6&l&m*&r &eContractor: &6%contractor-name%\n" + "  &6&l&m*&r &eStatus: &6%status%\n" + "  &6&l&m*&r &eDescription: &6%description%\n" + "  &6&l&m*&r &eLength: &6%length%\n" + "  &6&l&m*&r &eMoney: &6%money%\n" + " &6&l&m*&r &6Review\n" + "  &6&l&m*&r &eRate: &6%rate% &estars\n" + "  &6&l&m*&r &eReview: &6%review%";
         final ContractReview review = contract.review();
 
-        return Util.WordReplacer.replace(format, new String[]{"%contract-id%", "%employer-name%", "%contractor-name%", "%status%", "%description%", "%length%", "%money%", "%rate%", "%review%"}, contract.id().toString(), contract.employerName(), contract.employerName(), contract.hasEnded() ? "Ended" : "Available", contract.description(), contract.length() + "", contract.amount() + "", review.rate() == -1 ? "N/A" : review.rate() + "", review.description() == null ? "N/A" : review.description());
+        return Util.WordReplacer.replace(format, new String[]{"%contract-id%", "%employer-name%", "%contractor-name%", "%status%", "%description%", "%length%", "%money%", "%rate%", "%review%"}, contract.id().toString(), contract.employerName(), contract.contractorName(), contract.hasEnded() ? "Ended" : "Available", contract.description(), contract.length() + "", contract.amount() + "", review.rate() == -1 ? "N/A" : review.rate() + "", review.description() == null ? "N/A" : review.description());
     }
 }
