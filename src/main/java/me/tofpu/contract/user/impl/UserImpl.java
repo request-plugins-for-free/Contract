@@ -112,12 +112,13 @@ public class UserImpl implements User {
      */
     @Override
     public double averageRating() {
-        double average = 0;
+        double average = 0.0;
         final List<Contract> contracts = contractService.of(uniqueId());
         for (final Contract contract : contracts) {
+            if (!contract.contractorId().equals(this.uniqueId)) continue;
             average += contract.review().rate();
         }
-        return average / contracts.size();
+        return average == 0.0 ? 0.0 : average / contracts.size();
     }
 
     @Override
