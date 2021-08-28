@@ -1,7 +1,7 @@
 > *You can join our [discord](https://discord.gg/yGkS3Dh) to request something like this!*
 
 > **Note from the Developer**  
-We're looking for a volunteer Java Developer's to join the RPF Team, join the discord above for more information! :)
+We're looking for a volunteer Java Developer's to join the RPF Team, join the discord above for more information!
 
 ---
 **Contract** were designed and made for an RP server, It lets your fellow players send contracts to each other with a provided timeframe, balance and description, earn in-game balance money with [Vault](https://www.spigotmc.org/resources/vault.34315/) integration, rate them based on their work, and the ability to integrate average stars into your chat plugins with [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) integration support. It's also natively built on 1.17.1 but was tested on 1.8.8.
