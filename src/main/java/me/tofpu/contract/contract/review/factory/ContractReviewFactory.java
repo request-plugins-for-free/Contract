@@ -6,7 +6,7 @@ import me.tofpu.contract.contract.review.impl.ContractReviewImpl;
 public class ContractReviewFactory {
 
     public static ContractReview create() {
-        return new ContractReviewImpl(-1, null);
+        return new ContractReviewImpl(0, null);
     }
 
     public static ContractReview create(final double rated, final String description) {
