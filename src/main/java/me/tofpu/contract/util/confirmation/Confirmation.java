@@ -2,8 +2,10 @@ package me.tofpu.contract.util.confirmation;
 
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.factory.ContractFactory;
+import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 
+import java.time.Duration;
 import java.util.UUID;
 
 public class Confirmation {
@@ -15,10 +17,13 @@ public class Confirmation {
     private final UUID receiver;
     private final Contract contract;
 
+    private final long creation;
+
     public Confirmation(final UUID sender, final UUID receiver, final Contract contract) {
         this.sender = sender;
         this.receiver = receiver;
         this.contract = contract;
+        this.creation = System.nanoTime();
     }
 
     public UUID getSender() {
@@ -41,6 +46,10 @@ public class Confirmation {
 
     public void invalidate() {
         ConfirmationRegistry.getConfirmationRegistry().invalidate(this);
+    }
+
+    public long getCreation() {
+        return creation;
     }
 
     @Override

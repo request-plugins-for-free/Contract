@@ -1,15 +1,14 @@
 package me.tofpu.contract.util.confirmation.manager;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.confirmation.Confirmation;
 import me.tofpu.contract.util.confirmation.listener.RemovalListener;
+import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class ConfirmationRegistry {
     private static ConfirmationRegistry confirmationRegistry;
@@ -18,19 +17,15 @@ public class ConfirmationRegistry {
         return confirmationRegistry;
     }
 
-    public static void initialize(final UserService userService) {
-        ConfirmationRegistry.confirmationRegistry = new ConfirmationRegistry(userService);
+    public static void initialize(final Plugin plugin, final UserService userService) {
+        ConfirmationRegistry.confirmationRegistry = new ConfirmationRegistry(plugin, userService);
     }
 
-    private final Cache<UUID, Confirmation> confirmations;
+    private final Map<UUID, Confirmation> confirmations;
 
-    public ConfirmationRegistry(final UserService userService) {
-        this.confirmations = Caffeine
-                .newBuilder()
-                .expireAfterWrite(
-                        Path.SETTINGS_EXPIRE_ON.getValue(),
-                        TimeUnit.MINUTES)
-                .evictionListener(new RemovalListener(userService)).build();
+    public ConfirmationRegistry(final Plugin plugin, final UserService userService) {
+        this.confirmations = new HashMap<>();
+        new RemovalListener(plugin, userService, confirmations);
     }
 
     public Confirmation register(final Confirmation confirmation) {
@@ -40,12 +35,12 @@ public class ConfirmationRegistry {
 
     public Optional<Confirmation> get(final UUID uuid, boolean sender) {
         System.out.println(sender + " | " + uuid.toString());
-        if (sender) return Optional.ofNullable(this.confirmations.getIfPresent(uuid));
+        if (sender) return Optional.ofNullable(this.confirmations.get(uuid));
         return get(uuid);
     }
 
     private Optional<Confirmation> get(final UUID receiver) {
-        for (final Confirmation confirmation : this.confirmations.asMap().values()) {
+        for (final Confirmation confirmation : this.confirmations.values()) {
             if (confirmation.getReceiver().equals(receiver)) {
                 System.out.println(confirmation);
                 return Optional.of(confirmation);
@@ -55,14 +50,14 @@ public class ConfirmationRegistry {
     }
 
     public void invalidate(final Confirmation confirmation) {
-        this.confirmations.invalidate(confirmation.getSender());
+        this.confirmations.remove(confirmation.getSender());
     }
 
     public void invalidate(final UUID sender) {
-        this.confirmations.invalidate(sender);
+        this.confirmations.remove(sender);
     }
 
     public void invalidateAll() {
-        this.confirmations.invalidateAll();
+        this.confirmations.clear();
     }
 }

@@ -52,7 +52,7 @@ public final class ContractPlugin extends JavaPlugin {
         UserFactory.initialize(userService);
         ContractRunnable.initialize(userService, economy);
         UserImpl.initialize(contractService);
-        ConfirmationRegistry.initialize(userService);
+        ConfirmationRegistry.initialize(this, userService);
     }
 
     private void initializeData() {
