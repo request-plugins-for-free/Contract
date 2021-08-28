@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import me.tofpu.contract.command.extend.MainCommand;
 import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
+import me.tofpu.contract.data.path.Path;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.service.UserService;
 import me.tofpu.contract.util.Util;
@@ -53,7 +54,14 @@ public class CommandHandler {
             if (context.hasFlag("self")) return userService.getUser(context.getPlayer().getUniqueId()).orElse(null);
             else {
                 final String arg = context.popFirstArg();
-                return userService.getUser(arg).orElse(null);
+                if (arg == null){
+                    throw new InvalidCommandArgument(true);
+                }
+                final Optional<User> user = userService.getUser(arg);
+
+                if (user.isPresent()) return user.get();
+                Util.message(context.getPlayer(), Path.ERROR_TARGET_OFFLINE, new String[]{"%name%"}, arg);
+                throw new InvalidCommandArgument(false);
             }
         });
         contexts.registerIssuerAwareContext(Confirmation.class, context -> ConfirmationRegistry.getConfirmationRegistry().get(context.getPlayer().getUniqueId(), false).orElse(null));
