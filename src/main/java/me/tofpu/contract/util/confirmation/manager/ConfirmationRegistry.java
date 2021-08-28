@@ -25,7 +25,12 @@ public class ConfirmationRegistry {
     private final Cache<UUID, Confirmation> confirmations;
 
     public ConfirmationRegistry(final UserService userService) {
-        this.confirmations = Caffeine.newBuilder().expireAfterWrite(Path.SETTINGS_EXPIRE_ON.getValue(), TimeUnit.MINUTES).evictionListener(new RemovalListener(userService)).build();
+        this.confirmations = Caffeine
+                .newBuilder()
+                .expireAfterWrite(
+                        Path.SETTINGS_EXPIRE_ON.getValue(),
+                        TimeUnit.MINUTES)
+                .evictionListener(new RemovalListener(userService)).build();
     }
 
     public Confirmation register(final Confirmation confirmation) {

@@ -144,8 +144,10 @@ public class MainCommand extends ExtraBaseCommand {
     @Subcommand("current")
     @CommandAlias("current")
     @Description("Shows your current contract")
-    public void onCurrent(final User user, final Contract contract) {
-        Util.message(user.player(), formatContract(contract));
+    @Syntax("")
+    public void onCurrent(final Player player, final Contract contract) {
+        if (contract == null) return;
+        Util.message(player, formatContract(contract));
     }
 
     @Subcommand("rate")
@@ -154,7 +156,15 @@ public class MainCommand extends ExtraBaseCommand {
     @Syntax("<contract-id> <out-of-five> <review>")
     @Description("Rate the contract's work once it's done")
     public void onRate(final Player employer, final String id, final double rate, final String description) {
-        final UUID contractId = UUID.fromString(id);
+        final UUID contractId;
+        try {
+            contractId = UUID.fromString(id);
+        } catch (IllegalArgumentException exception) {
+            // TODO HAVE THIS CONFIGURABLE
+            employer.sendMessage("That is not an contract id.");
+            return;
+        }
+
         final Optional<Contract> optional = contractService.getContractById(contractId);
         if (!optional.isPresent()) {
             Util.message(employer, Path.ERROR_GENERAL_INVALID_CONTRACT);

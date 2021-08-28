@@ -7,6 +7,7 @@ import me.tofpu.contract.contract.Contract;
 import me.tofpu.contract.contract.service.ContractService;
 import me.tofpu.contract.user.User;
 import me.tofpu.contract.user.service.UserService;
+import me.tofpu.contract.util.Util;
 import me.tofpu.contract.util.confirmation.Confirmation;
 import me.tofpu.contract.util.confirmation.manager.ConfirmationRegistry;
 import net.milkbowl.vault.economy.Economy;
@@ -62,7 +63,8 @@ public class CommandHandler {
             if (optional.isPresent() && (contract = optional.get().currentContract()).isPresent()) {
                 return contract.get();
             }
-            throw new InvalidCommandArgument("You do not have a current contract right now...");
+            context.getPlayer().sendMessage(Util.colorize("&cYou do not have a current contract right now..."));
+            throw new InvalidCommandArgument(false);
         });
 
         // ommand registrations
