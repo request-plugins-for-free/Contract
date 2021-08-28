@@ -23,13 +23,10 @@ public class UserAdapter extends TypeAdapter<User> {
 
         out.name("current-contract");
         Optional<Contract> contract = value.currentContract();
-
-        System.out.println(value.name());
+        
         if (contract.isPresent()) {
-            System.out.println("current-contract: " + contract.get());
             DataManager.GSON.toJson(contract.get(), Contract.class, out);
         } else {
-            System.out.println("current-contract: null");
             out.nullValue();
         }
 

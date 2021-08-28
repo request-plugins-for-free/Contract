@@ -28,9 +28,7 @@ public class ContractRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        System.out.println("Has the contract ended?");
         if (this.contract.hasEnded()) {
-            System.out.println("It did! cancelling now!");
             cancel();
 
             //TODO: USE THE PROPER CLASS DEPENDENCY LATER, I'LL FIGURE IT OUT
@@ -56,7 +54,6 @@ public class ContractRunnable extends BukkitRunnable {
     }
 
     public void start() {
-        System.out.println("Starting timer for " + contract.employerName() + " contract!");
         this.runTaskTimerAsynchronously(ContractPlugin.getPlugin(ContractPlugin.class), 1L, 20L);
     }
 }

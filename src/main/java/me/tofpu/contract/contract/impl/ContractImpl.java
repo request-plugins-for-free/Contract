@@ -111,17 +111,6 @@ public class ContractImpl implements Contract {
      */
     public void freeze(final boolean status) {
         if (status) {
-            // QUESTION
-            // if employer creates contract on 2:15 for 10 minutes
-            // then leaves on 2:20 (spent 5 minutes in total, freezes)
-            // then joins back on 2:25 (5 minutes left, unfreezes)
-            // what should we do?
-
-            // SOLUTION
-            // decrease the length by the amount they spent online
-            // formula: LENGTH - AMOUNT SPENT ONLINE
-            // you fucking genius!! brave!! CLAP CLAP!
-            System.out.println("From " + length + " to " + (length - getDuration().getSeconds()));
             this.length -= getDuration().getSeconds();
             this.runnable.cancel();
         } else {
@@ -194,9 +183,6 @@ public class ContractImpl implements Contract {
     public boolean hasEnded() {
         final Duration duration = getDuration();
         final long seconds = duration.getSeconds();
-        System.out.println(employerName + " contract, seconds: " + seconds);
-        System.out.println("length: " + length());
-        System.out.println("statedAt: " + startedAt());
         return seconds >= length();
     }
 
@@ -222,15 +208,17 @@ public class ContractImpl implements Contract {
     public String toString() {
         final StringBuilder sb = new StringBuilder("ContractImpl{");
         sb.append("id=").append(id);
-        sb.append(", employerName='").append(employerName).append('\'');
+        sb.append(", runnable=").append(runnable);
         sb.append(", employerId=").append(employerId);
-        sb.append(", contractorName='").append(contractorName).append('\'');
         sb.append(", contractorId=").append(contractorId);
         sb.append(", review=").append(review);
         sb.append(", startedAt=").append(startedAt);
-        sb.append(", length=").append(length);
         sb.append(", amount=").append(amount);
         sb.append(", description='").append(description).append('\'');
+        sb.append(", employerName='").append(employerName).append('\'');
+        sb.append(", contractorName='").append(contractorName).append('\'');
+        sb.append(", frozen=").append(frozen);
+        sb.append(", length=").append(length);
         sb.append('}');
         return sb.toString();
     }

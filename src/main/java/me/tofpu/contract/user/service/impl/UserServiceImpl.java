@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUser(final String name) {
         for (final User user : this.users) {
-            System.out.println(user.name() + " vs " + name);
             if (user.name().equalsIgnoreCase(name)) return Optional.of(user);
         }
         return Optional.empty();

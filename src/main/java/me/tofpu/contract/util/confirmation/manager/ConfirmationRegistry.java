@@ -34,7 +34,6 @@ public class ConfirmationRegistry {
     }
 
     public Optional<Confirmation> get(final UUID uuid, boolean sender) {
-        System.out.println(sender + " | " + uuid.toString());
         if (sender) return Optional.ofNullable(this.confirmations.get(uuid));
         return get(uuid);
     }
@@ -42,7 +41,6 @@ public class ConfirmationRegistry {
     private Optional<Confirmation> get(final UUID receiver) {
         for (final Confirmation confirmation : this.confirmations.values()) {
             if (confirmation.getReceiver().equals(receiver)) {
-                System.out.println(confirmation);
                 return Optional.of(confirmation);
             }
         }

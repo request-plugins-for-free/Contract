@@ -50,7 +50,6 @@ public class CommandHandler {
 
         final CommandContexts<BukkitCommandExecutionContext> contexts = commandManager.getCommandContexts();
         contexts.registerIssuerAwareContext(User.class, context -> {
-            System.out.println(context.hasFlag("self") + " | " + context.getFirstArg());
             if (context.hasFlag("self")) return userService.getUser(context.getPlayer().getUniqueId()).orElse(null);
             else {
                 final String arg = context.popFirstArg();

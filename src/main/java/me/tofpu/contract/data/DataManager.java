@@ -57,7 +57,6 @@ public class DataManager {
 
     public void save() {
         contractService.saveAll(files[1]);
-        //        userService.saveAll(files[0]);
         Bukkit.getServer().getOnlinePlayers().forEach(this::saveUser);
     }
 
